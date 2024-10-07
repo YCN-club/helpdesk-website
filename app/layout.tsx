@@ -5,7 +5,6 @@ import type { Metadata, Viewport } from 'next';
 import { fontMono, fontSans } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
-import { SiteHeader } from '@/components/site-header';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   },
   description: `${siteConfig.description}`,
   icons: {
-    icon: '/institute.png',
+    icon: '/logo.png',
   },
 };
 
@@ -46,8 +45,7 @@ export default async function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SiteHeader role={'USER'} />
-          <div className="mx-10 flex-1">{children}</div>
+          {children}
           <TailwindIndicator />
           <Toaster />
         </ThemeProvider>
