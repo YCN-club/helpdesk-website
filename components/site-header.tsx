@@ -1,7 +1,7 @@
 'use client';
 
 import { siteConfig } from '@/config/site';
-import { CircleUser } from 'lucide-react';
+import { UserCircle } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 import Image from 'next/image';
@@ -28,7 +28,7 @@ export function SiteHeader({ role }: { role: string }) {
         <div className="h-9 w-9">
           <AspectRatio ratio={1 / 1}>
             <Image
-              src="/institute.png"
+              src="/logo.png"
               alt="Institute Logo"
               fill
               className="object-contain"
@@ -69,7 +69,7 @@ export function SiteHeader({ role }: { role: string }) {
             asChild
           >
             <Link href="/profile">
-              <CircleUser className="h-5 w-5" />
+              <UserCircle className="h-5 w-5" />
               <span className="sr-only">Toggle user menu</span>
             </Link>
           </Button>
