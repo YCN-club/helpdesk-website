@@ -14,7 +14,7 @@ import { ThemeSwitcher } from '@/components/theme-switcher';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 
-export function SiteHeader({ role }: { role: string }) {
+export function SiteHeader({ role }: { role: 'USER' | 'RESOLVER' | 'ADMIN' }) {
   const pathname = usePathname();
 
   return (
