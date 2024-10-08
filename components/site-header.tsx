@@ -69,7 +69,7 @@ export function SiteHeader({ role }: { role: 'USER' | 'RESOLVER' | 'ADMIN' }) {
             asChild
           >
             <Link href="/profile">
-              <UserCircle className="h-5 w-5" />
+              <UserCircle className="h-6 w-6" />
               <span className="sr-only">Toggle user menu</span>
             </Link>
           </Button>

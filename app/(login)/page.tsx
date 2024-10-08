@@ -2,7 +2,6 @@ import { siteConfig } from '@/config/site';
 
 import { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { UserAuthForm } from '@/components/auth-form';
 import { ThemeSwitcher } from '@/components/theme-switcher';
@@ -55,7 +54,7 @@ export default function AuthenticationPage() {
             </p>
           </div>
         </div>
-        <div className="flex justify-center lg:p-8">
+        <div className="flex justify-center p-2 lg:p-8">
           <Card className="sm:w-[350px]">
             <CardHeader>
               <CardTitle>Login with Outlook</CardTitle>
