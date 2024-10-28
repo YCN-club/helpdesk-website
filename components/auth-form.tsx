@@ -4,6 +4,8 @@ import { CircleNotch, MicrosoftOutlookLogo } from '@phosphor-icons/react';
 
 import * as React from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
@@ -12,6 +14,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -19,7 +22,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+      router.push('/dashboard');
+    }, 2000);
   }
 
   return (

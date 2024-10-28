@@ -25,17 +25,24 @@ export function SiteHeader({ role }: { role: 'USER' | 'RESOLVER' | 'ADMIN' }) {
       )}
     >
       <div className="flex flex-row items-center gap-2 p-2">
-        <div className="h-9 w-9">
-          <AspectRatio ratio={1 / 1}>
-            <Image
-              src="/logo.png"
-              alt="Institute Logo"
-              fill
-              className="object-contain"
+        <div className="flex flex-row items-center space-x-0.5 text-xl font-semibold tracking-tight">
+          <Image
+            src="/logo.png"
+            alt="Institute Logo"
+            height={30}
+            width={30}
+            className="dark:brightness-0 dark:invert"
+          />
+          <svg height="32" width="32" role="separator" viewBox="0 0 32 32">
+            <path
+              d="M22 5L9 28"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="stroke-black dark:stroke-white"
             />
-          </AspectRatio>
+          </svg>
+          helpdesk.
         </div>
-        <h1 className="block text-2xl font-semibold">helpdesk.</h1>
         {pathname !== '/' && (
           <div className="flex space-x-2 pl-4 text-sm font-medium">
             {siteConfig.navLinks.map(
@@ -69,7 +76,7 @@ export function SiteHeader({ role }: { role: 'USER' | 'RESOLVER' | 'ADMIN' }) {
             asChild
           >
             <Link href="/profile">
-              <UserCircle className="h-6 w-6" />
+              <UserCircle className="size-6" />
               <span className="sr-only">Toggle user menu</span>
             </Link>
           </Button>
