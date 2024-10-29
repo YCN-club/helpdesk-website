@@ -71,9 +71,8 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="mx-auto max-w-screen-lg px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-screen-lg py-6 sm:px-6">
       <div className="flex flex-col space-y-6">
-        <h1 className="text-2xl font-semibold">Welcome, Test User.</h1>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader>

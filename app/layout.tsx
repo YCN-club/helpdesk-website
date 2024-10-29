@@ -39,7 +39,7 @@ export default async function RootLayout({
       <head />
       <body
         className={cn(
-          'relative flex min-h-screen flex-col bg-background font-sans antialiased transition-colors duration-200',
+          'relative flex min-h-screen flex-col bg-sidebar font-sans antialiased',
           fontSans.variable,
           fontMono.variable
         )}

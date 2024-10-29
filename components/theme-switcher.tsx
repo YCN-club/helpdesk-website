@@ -29,11 +29,11 @@ export function ThemeSwitcher({ className }: { className?: string }) {
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           >
             <Sun weight="fill" className="h-[1.5rem] w-[1.3rem] dark:hidden" />
-            <MoonStars weight="fill" className="hidden h-5 w-5 dark:block" />
+            <MoonStars weight="fill" className="hidden h-6 w-6 dark:block" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Toggle theme</p>
+          <p>Toggle Theme</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
