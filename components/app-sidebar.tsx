@@ -119,7 +119,8 @@ export function AppSidebar() {
                   <a
                     href={item.url}
                     className={cn(
-                      isActive(item.url) && 'bg-background dark:bg-secondary'
+                      isActive(item.url) &&
+                        'bg-sidebar-accent text-sidebar-accent-foreground'
                     )}
                   >
                     <item.icon
