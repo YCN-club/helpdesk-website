@@ -84,27 +84,34 @@ export function AppSidebar() {
     <Sidebar variant="inset" collapsible="icon" className="h-full">
       <SidebarHeader className="my-2 flex">
         <SidebarMenu>
-          <SidebarMenuButton className="px-4 py-6">
+          <SidebarMenuButton className="px-4 py-6" asChild>
             <a
               href="/dashboard"
-              className="flex flex-row items-center space-x-0.5 text-xl font-semibold tracking-tight"
+              className="flex items-center text-xl font-semibold tracking-tight"
             >
               <Image
                 src="/logo.png"
                 alt="Institute Logo"
-                height={30}
-                width={30}
+                height={28}
+                width={28}
                 className="dark:brightness-0 dark:invert"
               />
-              <svg height="32" width="32" role="separator" viewBox="0 0 32 32">
-                <path
-                  d="M22 5L9 28"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="stroke-black dark:stroke-white"
-                />
-              </svg>
-              helpdesk.
+              <span className="-mx-1 flex items-center">
+                <svg
+                  height="32"
+                  width="32"
+                  role="separator"
+                  viewBox="0 0 32 32"
+                >
+                  <path
+                    d="M22 5L9 28"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="stroke-black dark:stroke-white"
+                  />
+                </svg>
+                helpdesk.
+              </span>
             </a>
           </SidebarMenuButton>
         </SidebarMenu>
