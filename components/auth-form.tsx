@@ -20,10 +20,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     event.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push('/dashboard');
-    }, 2000);
+    router.push('/api/auth/entra');
   }
 
   return (
