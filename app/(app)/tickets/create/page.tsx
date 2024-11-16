@@ -1,10 +1,18 @@
 'use client';
 
+import { categoriesConfig } from '@/config/categories';
+import { subcategoriesConfig } from '@/config/subcategories';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { useState } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { createTicket } from '@/lib/actions/tickets';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +26,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,190 +41,178 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
-const formSchema = z.object({
-  user_id: z.string().min(1, { message: 'User ID is required' }),
-  category_id: z.string().min(1, { message: 'Category is required' }),
-  severity: z.string().min(1, { message: 'Severity is required' }),
-  sla: z.string().min(1, { message: 'SLA is required' }),
+const ticketSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(255, 'Title must be less than 255 characters'),
+  category: z.string().min(1, 'Category is required'),
+  subcategory: z.string().min(1, 'Subcategory is required'),
   content: z
     .string()
-    .min(10, { message: 'Content must be at least 10 characters long' }),
+    .min(1, 'Content is required')
+    .max(1000, 'Content must be less than 1000 characters'),
 });
 
-export default function CreateTicketForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type TicketFormValues = z.infer<typeof ticketSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export default function CreateTicketPage() {
+  const router = useRouter();
+  const [category, setCategory] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<TicketFormValues>({
+    resolver: zodResolver(ticketSchema),
     defaultValues: {
-      user_id: '',
-      category_id: '',
-      severity: '',
-      sla: '',
+      title: '',
+      category: '',
+      subcategory: '',
       content: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    // Here you would typically send the form data to your backend
-    console.log(values);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      form.reset();
-    }, 2000);
+  const filteredSubcategories = subcategoriesConfig.filter(
+    (sub) => sub.category_id === category
+  );
+
+  async function onSubmit(data: TicketFormValues) {
+    setIsLoading(true);
+    try {
+      await createTicket({
+        title: data.title,
+        subcategory_id: data.subcategory,
+        initial_message: data.content,
+      });
+      toast.success('Ticket created successfully');
+      router.push('/tickets');
+    } catch (error) {
+      toast.error('Failed to create ticket');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
-    <div className="container flex min-h-screen items-center justify-center bg-background">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Create New Ticket</CardTitle>
-          <CardDescription>
-            Fill out the form below to create a new support ticket.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="grid grid-cols-2 gap-4"
-            >
+    <Card className="mx-auto w-full max-w-2xl">
+      <CardHeader>
+        <CardTitle>Create New Ticket</CardTitle>
+        <CardDescription>
+          Fill out the form below to submit a new support ticket.
+        </CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter a brief title for your ticket"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="user_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User ID</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter user ID" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter your student ID or employee ID.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category_id"
+                name="category"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setCategory(value);
+                        form.setValue('subcategory', '');
+                      }}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
+                          <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="1">Academic</SelectItem>
-                        <SelectItem value="2">Technical</SelectItem>
-                        <SelectItem value="3">Administrative</SelectItem>
+                        {Object.entries(categoriesConfig).map(([id, name]) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      Choose the category that best fits your issue.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="severity"
+                name="subcategory"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Severity</FormLabel>
+                    <FormLabel>Subcategory</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
+                      disabled={!category}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select severity" />
+                          <SelectValue placeholder="Select subcategory" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="critical">Critical</SelectItem>
+                        {filteredSubcategories.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {sub.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      Choose the severity level of your issue.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="sla"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SLA</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select SLA" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="24h">24 hours</SelectItem>
-                        <SelectItem value="48h">48 hours</SelectItem>
-                        <SelectItem value="72h">72 hours</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Choose the Service Level Agreement for this ticket.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Ticket Content</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Describe your issue here. Markdown is supported."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Provide details about your issue. You can use Markdown for
-                      formatting.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            onClick={form.handleSubmit(onSubmit)}
-          >
-            {isSubmitting ? 'Submitting...' : 'Create Ticket'}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+            </div>
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Provide a detailed description of your issue or request"
+                      {...field}
+                      rows={5}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create Ticket'
+              )}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
   );
 }

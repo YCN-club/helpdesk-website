@@ -4,8 +4,6 @@ import { MagnifyingGlass } from '@phosphor-icons/react';
 
 import { useState } from 'react';
 
-import type { Metadata } from 'next';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

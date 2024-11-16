@@ -1,17 +1,14 @@
 'use client';
 
 import {
-  Bell,
-  CreditCard,
   DotsThreeVertical,
   GearSix,
   House,
   type Icon,
   Plus,
-  SealCheck,
   SignOut,
-  Sparkle,
   Ticket,
+  User,
 } from '@phosphor-icons/react';
 
 import Image from 'next/image';
@@ -193,30 +190,14 @@ export function AppSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <Sparkle weight="bold" />
-                    Upgrade to Pro
+                    <User weight="bold" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <SignOut weight="bold" />
+                    Log out
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <SealCheck weight="bold" />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard weight="bold" />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell weight="bold" />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <SignOut weight="bold" />
-                  Log out
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
