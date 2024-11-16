@@ -3,6 +3,7 @@
 import { decodeJwt } from 'jose';
 
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 interface JwtPayload {
   name: string;
@@ -121,4 +122,9 @@ export async function registerUser(
             'An unexpected error occurred. Please try again later.',
     };
   }
+}
+
+export async function logoutUser() {
+  cookies().delete('JWT_TOKEN');
+  redirect('/');
 }
