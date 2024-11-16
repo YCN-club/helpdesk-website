@@ -1,12 +1,42 @@
 'use server';
 
+import { decodeJwt } from 'jose';
+
 import { cookies } from 'next/headers';
+
+interface JwtPayload {
+  name: string;
+  email: string;
+  uuid: string;
+  roles: string[];
+  exp: string;
+  iat: string;
+  nbf: string;
+  iss: string;
+}
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function getJwt(): Promise<JwtPayload> {
+  const cookieStore = cookies();
+  const token = cookieStore.get('JWT_TOKEN')?.value;
+
+  if (!token) {
+    throw new Error('No JWT token found');
+  }
+
+  try {
+    const payload = (await decodeJwt(token)) as JwtPayload;
+    return payload;
+  } catch (error) {
+    console.error('Failed to decode JWT:', error);
+    throw new Error('Invalid JWT token');
+  }
 }
 
 export async function registerUser(
