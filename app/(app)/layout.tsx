@@ -1,5 +1,6 @@
+import { cookies } from 'next/headers';
+
 import { AppSidebar } from '@/components/app-sidebar';
-import { SiteHeader } from '@/components/site-header';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import {
   SidebarInset,
@@ -7,14 +8,17 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
+
   return (
     <>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={defaultOpen}>
         <div className="flex h-screen w-full overflow-hidden">
           <AppSidebar />
           <SidebarInset className="!ml-0 flex flex-grow flex-col overflow-hidden">

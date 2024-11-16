@@ -3,7 +3,7 @@
 import { siteConfig } from '@/config/site';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -20,15 +20,14 @@ import {
 } from '@/components/ui/card';
 
 export default function AuthenticationPage() {
-  const [cookiesEnabled, setCookiesEnabled] = useState(true);
+  const [message, setMessage] = useState('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const cookieEnabled = navigator.cookieEnabled;
-    setCookiesEnabled(cookieEnabled);
 
     if (!cookieEnabled) {
-      toast.error(
+      setMessage(
         'Cookies are disabled. Please enable cookies to use this site.'
       );
     }
@@ -37,7 +36,7 @@ export default function AuthenticationPage() {
   useEffect(() => {
     const error = searchParams.get('session_expired');
     if (error === 'true') {
-      toast.error('Your session has expired. Please log in again.');
+      setMessage('Your session has expired. Please log in again.');
     }
   }, [searchParams]);
 
@@ -55,13 +54,15 @@ export default function AuthenticationPage() {
           <UserAuthForm />
         </CardContent>
 
-        {!cookiesEnabled && (
-          <CardFooter>
-            <p className="text-sm text-destructive">
-              Cookies are disabled. Please enable cookies to use this site.
-            </p>
-          </CardFooter>
-        )}
+        <Suspense fallback={null}>
+          {message !== '' && (
+            <CardFooter>
+              <p className="text-sm text-destructive">
+                Cookies are disabled. Please enable cookies to use this site.
+              </p>
+            </CardFooter>
+          )}
+        </Suspense>
       </Card>
     </>
   );

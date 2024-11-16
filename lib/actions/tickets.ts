@@ -23,7 +23,7 @@ export async function createTicket({
   const formData = new FormData();
   formData.append('title', title);
   formData.append('subcategory_id', subcategory_id);
-  formData.append('inital_message', initial_message);
+  formData.append('initial_message', initial_message);
 
   const response = await fetch(
     'https://helpdesk-staging.alphaspiderman.dev/api/me/create',
