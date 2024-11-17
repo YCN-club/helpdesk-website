@@ -1,17 +1,18 @@
 import { Plus } from 'lucide-react';
 
-import { Suspense } from 'react';
-
 import Link from 'next/link';
+
+import { getTickets } from '@/lib/actions/tickets';
 
 import { Button } from '@/components/ui/button';
 
-import { TicketsTable } from '@/app/(app)/tickets/data-table';
-import { TicketsTableSkeleton } from '@/app/(app)/tickets/skeleton';
+import { DataTable } from './data-table';
 
-export default function TicketsPage() {
+export default async function TicketsPage() {
+  const tickets = await getTickets();
+
   return (
-    <div className="mx-auto max-w-screen-lg py-6">
+    <div className="mx-auto max-w-screen-xl py-6">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Your Tickets</h1>
@@ -21,9 +22,7 @@ export default function TicketsPage() {
             </Link>
           </Button>
         </div>
-        <Suspense fallback={<TicketsTableSkeleton />}>
-          <TicketsTable />
-        </Suspense>
+        <DataTable data={tickets} />
       </div>
     </div>
   );
