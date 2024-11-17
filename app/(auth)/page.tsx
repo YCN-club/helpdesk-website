@@ -1,11 +1,9 @@
 'use client';
 
-import { siteConfig } from '@/config/site';
 import { toast } from 'sonner';
 
 import { Suspense, useEffect, useState } from 'react';
 
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 
 import { UserAuthForm } from '@/components/auth-form';
