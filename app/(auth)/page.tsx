@@ -45,8 +45,7 @@ export default function AuthenticationPage() {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-background">
-      <ThemeSwitcher className="absolute right-4 top-4 md:right-8 md:top-8" />
+    <div className="relative flex h-full items-center justify-center bg-background">
       <Card className="w-full max-w-[350px]">
         <CardHeader>
           <CardTitle>Login with Outlook</CardTitle>

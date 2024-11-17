@@ -18,7 +18,7 @@ export default async function AppLayout({
 
   return (
     <>
-      <SidebarProvider defaultOpen={defaultOpen}>
+      <SidebarProvider defaultOpen={!defaultOpen}>
         <div className="flex h-screen w-full overflow-hidden">
           <AppSidebar />
           <SidebarInset className="!ml-0 flex flex-grow flex-col overflow-hidden">

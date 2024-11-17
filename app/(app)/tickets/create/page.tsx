@@ -94,7 +94,7 @@ export default function CreateTicketPage() {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-2xl">
+    <Card className="mx-auto mt-4 w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Create New Ticket</CardTitle>
         <CardDescription>
