@@ -14,7 +14,8 @@ import {
 import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { getJwt } from '@/lib/actions/auth';
 import { logoutUser } from '@/lib/actions/auth';
@@ -83,6 +84,7 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isActive = (url: string) => pathname === url;
   const [userData, setUserData] = useState<{
     name: string;
@@ -123,7 +125,7 @@ export function AppSidebar() {
       <SidebarHeader className="my-2 flex">
         <SidebarMenu>
           <SidebarMenuButton className="px-4 py-6" asChild>
-            <a
+            <Link
               href="/dashboard"
               className="flex items-center text-xl font-semibold tracking-tight"
             >
@@ -150,7 +152,7 @@ export function AppSidebar() {
                 </svg>
                 helpdesk.
               </span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenu>
       </SidebarHeader>
@@ -161,7 +163,7 @@ export function AppSidebar() {
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton tooltip={item.title} asChild>
-                  <a
+                  <Link
                     href={item.url}
                     className={cn(
                       isActive(item.url) &&
@@ -172,7 +174,7 @@ export function AppSidebar() {
                       weight={isActive(item.url) ? 'fill' : undefined}
                     />
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -241,7 +243,7 @@ export function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => router.push('/profile')}>
                     <User weight="bold" />
                     Profile
                   </DropdownMenuItem>
