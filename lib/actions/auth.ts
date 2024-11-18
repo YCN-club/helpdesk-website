@@ -19,22 +19,47 @@ interface JwtPayload {
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 
+class AuthenticationError extends Error {
+  constructor(
+    message = 'Authentication required',
+    public expired = false
+  ) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function getJwt(): Promise<JwtPayload> {
-  const cookieStore = cookies();
-  const token = cookieStore.get('JWT_TOKEN')?.value;
-
+function getToken(): string {
+  const token = cookies().get('JWT_TOKEN')?.value;
   if (!token) {
-    throw new Error('No JWT token found');
+    throw new AuthenticationError('No JWT token found', true);
   }
+  return token;
+}
 
+export async function getJwt(): Promise<JwtPayload> {
   try {
+    const token = getToken();
     const payload = (await decodeJwt(token)) as JwtPayload;
     return payload;
   } catch (error) {
+    if (error instanceof AuthenticationError) {
+      redirect('/?session_expired=true');
+    }
     console.error('Failed to decode JWT:', error);
     throw new Error('Invalid JWT token');
   }
@@ -44,43 +69,35 @@ export async function registerUser(
   formData: FormData,
   retryCount = 0
 ): Promise<{ success: boolean; error?: string }> {
-  const cookieStore = cookies();
-  const token = cookieStore.get('JWT_TOKEN');
-
-  if (!token) {
-    return {
-      success: false,
-      error: 'No authentication token found. Please log in again.',
-    };
-  }
-
-  const dataToSend = new FormData();
-  dataToSend.append('name', formData.get('name') as string);
-  dataToSend.append('email', formData.get('email') as string);
-
-  const otherFields = [
-    'yearOfGraduation',
-    'degree',
-    'hostelBlock',
-    'roomNumber',
-  ];
-  const dataObject = otherFields.reduce(
-    (acc, field) => {
-      acc[field] = { name: field, value: formData.get(field) as string };
-      return acc;
-    },
-    {} as Record<string, { name: string; value: string }>
-  );
-
-  dataToSend.append('data', JSON.stringify(dataObject));
-
   try {
+    const token = getToken();
+
+    const dataToSend = new FormData();
+    dataToSend.append('name', formData.get('name') as string);
+    dataToSend.append('email', formData.get('email') as string);
+
+    const otherFields = [
+      'yearOfGraduation',
+      'degree',
+      'hostelBlock',
+      'roomNumber',
+    ];
+    const dataObject = otherFields.reduce(
+      (acc, field) => {
+        acc[field] = { name: field, value: formData.get(field) as string };
+        return acc;
+      },
+      {} as Record<string, { name: string; value: string }>
+    );
+
+    dataToSend.append('data', JSON.stringify(dataObject));
+
     const response = await fetch(
       'https://helpdesk-staging.alphaspiderman.dev/api/me/register',
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Authorization: `Bearer ${token}`,
         },
         body: dataToSend,
       }
@@ -90,14 +107,13 @@ export async function registerUser(
 
     if (response.ok && responseData.authenticated) {
       // Set the new JWT_TOKEN cookie
-      cookieStore.set('JWT_TOKEN', responseData.token, {
+      cookies().set('JWT_TOKEN', responseData.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
       });
 
-      // Return success instead of redirecting
       return { success: true };
     } else {
       if (
@@ -108,18 +124,32 @@ export async function registerUser(
         await delay(RETRY_DELAY);
         return registerUser(formData, retryCount + 1);
       }
-      throw new Error(responseData.message || 'Failed to register user');
+      throw new ApiError(
+        responseData.message || 'Failed to register user',
+        response.status
+      );
     }
   } catch (error) {
     console.error('Registration error:', error);
+    if (error instanceof AuthenticationError && error.expired) {
+      redirect('/?session_expired=true');
+    }
+    if (
+      error instanceof ApiError &&
+      error.message === 'Please attempt to login after a few minutes'
+    ) {
+      return {
+        success: false,
+        error:
+          'Registration is temporarily unavailable. Please try again in a few minutes.',
+      };
+    }
     return {
       success: false,
       error:
-        (error as Error).message ===
-        'Please attempt to login after a few minutes'
-          ? 'Registration is temporarily unavailable. Please try again in a few minutes.'
-          : (error as Error).message ||
-            'An unexpected error occurred. Please try again later.',
+        error instanceof Error
+          ? error.message
+          : 'An unexpected error occurred. Please try again later.',
     };
   }
 }
