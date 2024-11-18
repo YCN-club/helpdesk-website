@@ -1,49 +1,10 @@
+import type { TicketDetails } from '@/types';
+
 import { toTitleCase } from '@/lib/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface TicketDetails {
-  id: string;
-  title: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    data: Record<string, { name: string; value: string }>;
-    is_team: number;
-    is_sys_admin: number;
-  };
-  subcategory: {
-    id: string;
-    category_id: string;
-    name: string;
-  };
-  assignee: {
-    id: string;
-    name: string;
-    email: string;
-    data: Record<string, { name: string; value: string }>;
-    is_team: number;
-    is_sys_admin: number;
-  };
-  severity: {
-    id: string;
-    name: string;
-    level: number;
-    note: string;
-  };
-  sla: {
-    id: string;
-    name: string;
-    note: string;
-  };
-  created_at: string;
-  closed_at: string | null;
-  resolution_status: string;
-  ticket_status: string;
-}
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
   return (

@@ -1,3 +1,4 @@
+import type { JwtPayload } from '@/types';
 import { decodeJwt } from 'jose';
 
 import { Suspense } from 'react';
@@ -12,12 +13,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { NewMessageForm } from './new-message-form';
 import { TicketStatus } from './ticket-status';
 import { TicketTimeline } from './ticket-timeline';
-
-interface JwtPayload {
-  uuid: string;
-  email: string;
-  name: string;
-}
 
 export default async function TicketDetailsPage({
   params,

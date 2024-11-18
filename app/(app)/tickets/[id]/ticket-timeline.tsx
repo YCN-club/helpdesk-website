@@ -1,18 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Message } from '@/types';
 
-interface Message {
-  id: string;
-  type: 'SYSTEM' | 'USER';
-  author: {
-    id: string;
-    name: string;
-  };
-  created_at: string;
-  content: string;
-  file_id: string | null;
-}
+import { useEffect, useRef } from 'react';
 
 export function TicketTimeline({
   messages,

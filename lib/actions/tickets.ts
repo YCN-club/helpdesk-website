@@ -1,5 +1,7 @@
 'use server';
 
+import type { Ticket } from '@/types';
+
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -23,20 +25,6 @@ class ApiError extends Error {
     super(message);
     this.name = 'ApiError';
   }
-}
-
-export interface Ticket {
-  id: string;
-  title: string;
-  user_id: string;
-  subcategory_id: string;
-  assignee_id: string;
-  severity: string;
-  sla: string;
-  created_at: string;
-  closed_at: string | null;
-  resolution_status: 'UNRESOLVED' | string;
-  ticket_status: 'OPEN' | string;
 }
 
 // Helper function to get token
