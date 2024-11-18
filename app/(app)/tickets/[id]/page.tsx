@@ -3,6 +3,7 @@ import { decodeJwt } from 'jose';
 
 import { Suspense } from 'react';
 
+import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
@@ -10,15 +11,41 @@ import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-import { NewMessageForm } from './new-message-form';
-import { TicketStatus } from './ticket-status';
-import { TicketTimeline } from './ticket-timeline';
+import { NewMessageForm } from '@/app/(app)/tickets/[id]/new-message-form';
+import { TicketStatus } from '@/app/(app)/tickets/[id]/ticket-status';
+import { TicketTimeline } from '@/app/(app)/tickets/[id]/ticket-timeline';
 
-export default async function TicketDetailsPage({
-  params,
-}: {
+type Props = {
   params: { id: string };
-}) {
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const ticketDetailsData = await getTicketDetails(params.id);
+
+    if (ticketDetailsData.status !== 'success') {
+      return {
+        title: 'Ticket Not Found',
+      };
+    }
+
+    const { ticket } = ticketDetailsData;
+
+    return {
+      title: `${ticket.title}`,
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Ticket Not Found',
+    };
+  }
+}
+
+export default async function TicketDetailsPage({ params }: Props) {
   const [messagesData, ticketDetailsData] = await Promise.all([
     getTicketMessages(params.id),
     getTicketDetails(params.id),

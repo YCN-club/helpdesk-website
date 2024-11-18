@@ -1,12 +1,17 @@
 import { Plus } from 'lucide-react';
 
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { getTickets } from '@/lib/actions/tickets';
 
 import { Button } from '@/components/ui/button';
 
-import { DataTable } from './data-table';
+import { DataTable } from '@/app/(app)/tickets/data-table';
+
+export const metadata: Metadata = {
+  title: 'Tickets',
+};
 
 export default async function TicketsPage() {
   const tickets = await getTickets();
