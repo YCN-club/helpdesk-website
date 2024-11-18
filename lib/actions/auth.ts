@@ -1,10 +1,11 @@
 'use server';
 
-import type { JwtPayload } from '@/types';
 import { decodeJwt } from 'jose';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import type { JwtPayload } from '@/types';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // 5 seconds

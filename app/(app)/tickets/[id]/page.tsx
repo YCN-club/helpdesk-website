@@ -1,4 +1,3 @@
-import type { JwtPayload } from '@/types';
 import { decodeJwt } from 'jose';
 
 import { Suspense } from 'react';
@@ -6,6 +5,8 @@ import { Suspense } from 'react';
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+
+import type { JwtPayload } from '@/types';
 
 import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
 

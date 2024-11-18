@@ -1,8 +1,8 @@
 'use client';
 
-import { Message } from '@/types';
-
 import { useEffect, useRef } from 'react';
+
+import { Message } from '@/types';
 
 export function TicketTimeline({
   messages,

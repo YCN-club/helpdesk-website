@@ -20,7 +20,7 @@ import * as React from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { Ticket } from '@/lib/actions/tickets';
+import { Ticket } from '@/types';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

@@ -1,10 +1,10 @@
 'use server';
 
-import type { Ticket } from '@/types';
-
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import type { Ticket } from '@/types';
 
 // Custom error classes
 class AuthenticationError extends Error {

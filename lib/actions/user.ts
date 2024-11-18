@@ -1,9 +1,10 @@
 'use server';
 
-import type { JwtPayload } from '@/types';
 import { decodeJwt } from 'jose';
 
 import { cookies } from 'next/headers';
+
+import type { JwtPayload } from '@/types';
 
 class AuthenticationError extends Error {
   redirect: boolean;
