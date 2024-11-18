@@ -19,7 +19,7 @@ interface JwtPayload {
   name: string;
 }
 
-export default async function TicketPage({
+export default async function TicketDetailsPage({
   params,
 }: {
   params: { id: string };

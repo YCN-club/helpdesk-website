@@ -145,7 +145,7 @@ const columns: ColumnDef<Ticket>[] = [
                 toast.success('Ticket ID copied to clipboard');
               }}
             >
-              Copy ticket ID
+              Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -154,7 +154,7 @@ const columns: ColumnDef<Ticket>[] = [
                 navigateToTicketDetails(ticket.id, router);
               }}
             >
-              View ticket details
+              View Ticket
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
