@@ -29,7 +29,7 @@ export async function generateMetadata(
 
     if (ticketDetailsData.status !== 'success') {
       return {
-        title: 'Ticket Not Found',
+        title: 'Ticket Details',
       };
     }
 
