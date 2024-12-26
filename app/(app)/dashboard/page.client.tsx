@@ -2,7 +2,7 @@
 
 import { MagnifyingGlass } from '@phosphor-icons/react';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,47 +23,50 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { getTickets } from '@/lib/actions/tickets';
+const dummyTickets = [
+  {
+    id: 1,
+    title: 'Cannot access email',
+    status: 'Open',
+    priority: 'High',
+    assignedTo: 'John Doe',
+  },
+  {
+    id: 2,
+    title: 'Printer not working',
+    status: 'In Progress',
+    priority: 'Medium',
+    assignedTo: 'Jane Smith',
+  },
+  {
+    id: 3,
+    title: 'New software installation',
+    status: 'Open',
+    priority: 'Low',
+    assignedTo: 'Unassigned',
+  },
+  {
+    id: 4,
+    title: 'Password reset request',
+    status: 'Closed',
+    priority: 'Low',
+    assignedTo: 'John Doe',
+  },
+  {
+    id: 5,
+    title: 'VPN connection issues',
+    status: 'Open',
+    priority: 'High',
+    assignedTo: 'Jane Smith',
+  },
+];
 
 export default function DashboardPageClient() {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        const fetchedTickets = await getTickets();
-
-        // Add random attributes
-        const statuses = ['Open', 'In Progress', 'Closed'];
-        const priorities = ['High', 'Medium', 'Low'];
-        const assignees = ['Alice', 'Bob', 'Charlie', 'Unassigned'];
-
-        const enrichedTickets = fetchedTickets.map((ticket) => ({
-          ...ticket,
-          status: statuses[Math.floor(Math.random() * statuses.length)],
-          priority: priorities[Math.floor(Math.random() * priorities.length)],
-          assignedTo: assignees[Math.floor(Math.random() * assignees.length)],
-        }));
-
-        setTickets(enrichedTickets);
-      } catch (err) {
-        setError('Failed to fetch tickets.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTickets();
-  }, []);
-
-  const filteredTickets = tickets.filter((ticket) =>
+  const filteredTickets = dummyTickets.filter((ticket) =>
     ticket.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div className="mx-auto max-w-screen-lg py-6">
@@ -71,19 +74,19 @@ export default function DashboardPageClient() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.status === 'Open').length}</CardTitle>
+              <CardTitle>25</CardTitle>
               <CardDescription>Open Tickets</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.status === 'Closed').length}</CardTitle>
+              <CardTitle>1</CardTitle>
               <CardDescription>Completed Tickets</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.assignedTo === 'Unassigned').length}</CardTitle>
+              <CardTitle>11</CardTitle>
               <CardDescription>Unassigned Tickets</CardDescription>
             </CardHeader>
           </Card>
@@ -113,7 +116,7 @@ export default function DashboardPageClient() {
                   <TableHead>ID</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Severity</TableHead>
+                  <TableHead>Priority</TableHead>
                   <TableHead>Assigned To</TableHead>
                 </TableRow>
               </TableHeader>
