@@ -212,3 +212,54 @@ export async function addTicketMessage(ticketId: string, message: string) {
     throw error;
   }
 }
+
+export async function getCategories() {
+  try {
+    const token = getToken();
+    const response = await fetch(
+      'https://helpdesk-staging.alphaspiderman.dev/api/options/category',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await handleApiResponse(response);
+    return data.options;
+  } catch (error) {
+    if (error instanceof AuthenticationError && error.expired) {
+      redirect('/?session_expired=true');
+    }
+    console.error(`Error getting categories:`, error);
+    throw error;
+  }
+}
+
+export async function getSubcategories(categoryId: string) {
+  try {
+    const token = getToken();
+    const response = await fetch(
+      `https://helpdesk-staging.alphaspiderman.dev/api/options/category?category_id=${categoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await handleApiResponse(response);
+    return data.options;
+  } catch (error) {
+    if (error instanceof AuthenticationError && error.expired) {
+      redirect('/?session_expired=true');
+    }
+    console.error(
+      `Error getting subcategories for category ${categoryId}:`,
+      error
+    );
+    throw error;
+  }
+}

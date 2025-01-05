@@ -1,18 +1,21 @@
 'use client';
 
-import { categoriesConfig } from '@/config/categories';
-import { subcategoriesConfig } from '@/config/subcategories';
+import { runtimeEnv } from '@/config/env';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { createTicket } from '@/lib/actions/tickets';
+import {
+  createTicket,
+  getCategories,
+  getSubcategories,
+} from '@/lib/actions/tickets';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -60,6 +63,8 @@ export default function CreateTicketPageClient() {
   const router = useRouter();
   const [category, setCategory] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
 
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema),
@@ -71,9 +76,35 @@ export default function CreateTicketPageClient() {
     },
   });
 
-  const filteredSubcategories = subcategoriesConfig.filter(
-    (sub) => sub.category_id === category
-  );
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        setIsLoading(true);
+        const data = await getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  async function handleCategoryChange(value: string) {
+    form.setValue('category', value);
+    setCategory(value);
+    form.setValue('subcategory', '');
+    setIsLoading(true);
+    try {
+      const data = await getSubcategories(value);
+      setSubcategories(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   async function onSubmit(data: TicketFormValues) {
     setIsLoading(true);
@@ -128,11 +159,7 @@ export default function CreateTicketPageClient() {
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setCategory(value);
-                        form.setValue('subcategory', '');
-                      }}
+                      onValueChange={handleCategoryChange}
                       value={field.value}
                     >
                       <FormControl>
@@ -141,9 +168,9 @@ export default function CreateTicketPageClient() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.entries(categoriesConfig).map(([id, name]) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -161,7 +188,7 @@ export default function CreateTicketPageClient() {
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}
-                      disabled={!category}
+                      disabled={!category || isLoading}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -169,11 +196,17 @@ export default function CreateTicketPageClient() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredSubcategories.map((sub) => (
-                          <SelectItem key={sub.id} value={sub.id}>
-                            {sub.name}
+                        {isLoading ? (
+                          <SelectItem disabled value="loading">
+                            Loading subcategories...
                           </SelectItem>
-                        ))}
+                        ) : (
+                          subcategories.map((sub) => (
+                            <SelectItem key={sub.id} value={sub.id}>
+                              {sub.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
