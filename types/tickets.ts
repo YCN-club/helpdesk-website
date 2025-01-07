@@ -1,15 +1,43 @@
 export interface Ticket {
   id: string;
   title: string;
-  user_id: string;
-  subcategory_id: string;
-  assignee_id: string;
-  severity: string;
-  sla: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    is_team: boolean | number;
+    is_sys_admin: boolean | number;
+  };
+  subcategory: {
+    id: string;
+    name: string;
+    category: {
+      id: string;
+      name: string;
+    };
+  };
+  assignee: {
+    id: string;
+    name: string;
+    email: string;
+    is_team: boolean | number;
+    is_sys_admin: boolean | number;
+  };
+  severity: {
+    id: string;
+    name: string;
+    level: number;
+    note: string;
+  };
+  sla: {
+    id: string;
+    name: string;
+    note: string;
+  };
   created_at: string;
   closed_at: string | null;
-  resolution_status: 'UNRESOLVED' | string;
-  ticket_status: 'OPEN' | string;
+  resolution_status: string;
+  ticket_status: string;
 }
 
 export interface TicketDetails {

@@ -52,6 +52,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -60,26 +61,31 @@ const items = [
     title: 'Create Ticket',
     url: '/tickets/create',
     icon: Plus,
+    role: 'user',
   },
   {
     title: 'Dashboard',
     url: '/dashboard',
     icon: House,
+    role: 'team',
   },
   {
-    title: 'Tickets',
+    title: 'My Tickets',
     url: '/tickets',
     icon: Ticket,
+    role: 'user',
   },
   {
     title: 'Admin Settings',
     url: '/settings',
     icon: GearSix,
+    role: 'admin',
   },
 ] satisfies {
   title: string;
   url: string;
   icon: Icon;
+  role: string;
 }[];
 
 export function AppSidebar() {
@@ -89,6 +95,7 @@ export function AppSidebar() {
   const [userData, setUserData] = useState<{
     name: string;
     email: string;
+    roles: string[];
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -100,6 +107,7 @@ export function AppSidebar() {
         setUserData({
           name: jwtPayload.name,
           email: jwtPayload.email,
+          roles: jwtPayload.roles,
         });
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -160,24 +168,32 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarMenu>
-            {items.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton tooltip={item.title} asChild>
-                  <Link
-                    href={item.url}
-                    className={cn(
-                      isActive(item.url) &&
-                        'bg-sidebar-accent text-sidebar-accent-foreground'
-                    )}
-                  >
-                    <item.icon
-                      weight={isActive(item.url) ? 'fill' : undefined}
-                    />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuSkeleton showIcon />
+                  </SidebarMenuItem>
+                ))
+              : items
+                  .filter((item) => userData?.roles.includes(item.role))
+                  .map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton tooltip={item.title} asChild>
+                        <Link
+                          href={item.url}
+                          className={cn(
+                            isActive(item.url) &&
+                              'bg-sidebar-accent text-sidebar-accent-foreground'
+                          )}
+                        >
+                          <item.icon
+                            weight={isActive(item.url) ? 'fill' : undefined}
+                          />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
