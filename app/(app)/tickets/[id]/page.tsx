@@ -10,6 +10,7 @@ import type { JwtPayload } from '@/types';
 
 import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
 
+import { RoleCheck } from '@/components/role-check';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { NewMessageForm } from '@/app/(app)/tickets/[id]/new-message-form';
@@ -86,6 +87,14 @@ export default async function TicketDetailsPage({ params }: Props) {
                   ID: {ticket.id}
                 </span>
               </div>
+              <RoleCheck role="user" fallback={<div>Loading...</div>}>
+                <div className="flex flex-col">
+                  <span className="text-sm text-muted-foreground">
+                    Assigned to:
+                  </span>
+                  <span className="text-sm">{ticket.assigned_to}</span>
+                </div>
+              </RoleCheck>
             </CardHeader>
             <CardContent className="flex flex-grow flex-col overflow-hidden">
               <Suspense fallback={<div>Loading messages...</div>}>

@@ -1,29 +1,21 @@
-'use client';
+import React, { Suspense } from 'react';
 
-import { decodeJwt } from 'jose';
+import { getJwt } from '@/lib/actions/auth';
 
-import React, { useEffect, useState } from 'react';
-
-type RoleCheckProps = {
+export async function RoleCheck({
+  children,
+  fallback,
+  role,
+}: {
   children: React.ReactNode;
-  allowedRoles: string[];
-};
+  fallback: React.JSX.Element;
+  role: string;
+}) {
+  const jwtToken = await getJwt();
 
-export function RoleCheck({ children, allowedRoles }: RoleCheckProps) {
-  const [hasRole, setHasRole] = useState(false);
-
-  useEffect(() => {
-    try {
-      const token = localStorage.getItem('JWT_TOKEN');
-      if (!token) return;
-      const decoded = decodeJwt(token) as { role?: string };
-      if (decoded.role && allowedRoles.includes(decoded.role)) {
-        setHasRole(true);
-      }
-    } catch (error) {
-      console.error('Error decoding JWT in RoleCheck:', error);
-    }
-  }, [allowedRoles]);
-
-  return hasRole ? <>{children}</> : null;
+  return (
+    <Suspense fallback={fallback}>
+      {jwtToken.roles.includes(role) ? children : null}
+    </Suspense>
+  );
 }
