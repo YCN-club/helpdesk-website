@@ -7,6 +7,8 @@ import { redirect } from 'next/navigation';
 
 import type { JwtPayload } from '@/types';
 
+import { runtimeEnv } from '@/config/env';
+
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 
@@ -83,16 +85,13 @@ export async function registerUser(
 
     dataToSend.append('data', JSON.stringify(dataObject));
 
-    const response = await fetch(
-      'https://helpdesk-staging.alphaspiderman.dev/api/me/register',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: dataToSend,
-      }
-    );
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/me/register`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: dataToSend,
+    });
 
     const responseData = await response.json();
 

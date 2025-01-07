@@ -5,6 +5,7 @@
     "^(next/(.*)$)|^(next$)",
     "^types$",
     "^@/types",
+    "^@/config/(.*)$",
     "^@/lib/(.*)$",
     "^@/hooks/(.*)$",
     "^@/components/(.*)$",

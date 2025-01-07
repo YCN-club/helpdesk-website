@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation';
 
 import type { Ticket } from '@/types';
 
+import { runtimeEnv } from '@/config/env';
+
 // Custom error classes
 class AuthenticationError extends Error {
   constructor(
@@ -57,16 +59,13 @@ async function handleApiResponse(response: Response) {
 export async function getTickets(): Promise<Ticket[]> {
   try {
     const token = getToken();
-    const response = await fetch(
-      'https://helpdesk-staging.alphaspiderman.dev/api/tickets',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      }
-    );
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/tickets`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
     const data = await handleApiResponse(response);
     return data.tickets;
@@ -95,16 +94,13 @@ export async function createTicket({
     formData.append('subcategory_id', subcategory_id);
     formData.append('initial_message', initial_message);
 
-    const response = await fetch(
-      'https://helpdesk-staging.alphaspiderman.dev/api/me/create',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      }
-    );
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/me/create`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
     const data = await handleApiResponse(response);
     revalidatePath('/tickets');
@@ -122,7 +118,7 @@ export async function getTicketMessages(ticketId: string) {
   try {
     const token = getToken();
     const response = await fetch(
-      `https://helpdesk-staging.alphaspiderman.dev/api/tickets/${ticketId}/messages`,
+      `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/messages`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -144,7 +140,7 @@ export async function getTicketStatus(ticketId: string) {
   try {
     const token = getToken();
     const response = await fetch(
-      `https://helpdesk-staging.alphaspiderman.dev/api/tickets/${ticketId}/status`,
+      `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/status`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -166,7 +162,7 @@ export async function getTicketDetails(ticketId: string) {
   try {
     const token = getToken();
     const response = await fetch(
-      `https://helpdesk-staging.alphaspiderman.dev/api/tickets/${ticketId}`,
+      `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -191,7 +187,7 @@ export async function addTicketMessage(ticketId: string, message: string) {
     formData.append('content', message);
 
     const response = await fetch(
-      `https://helpdesk-staging.alphaspiderman.dev/api/tickets/${ticketId}/messages`,
+      `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/messages`,
       {
         method: 'POST',
         headers: {
@@ -216,16 +212,13 @@ export async function addTicketMessage(ticketId: string, message: string) {
 export async function getCategories() {
   try {
     const token = getToken();
-    const response = await fetch(
-      'https://helpdesk-staging.alphaspiderman.dev/api/options/category',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      }
-    );
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/category`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
     const data = await handleApiResponse(response);
     return data.options;
   } catch (error) {
@@ -241,7 +234,7 @@ export async function getSubcategories(categoryId: string) {
   try {
     const token = getToken();
     const response = await fetch(
-      `https://helpdesk-staging.alphaspiderman.dev/api/options/category?category_id=${categoryId}`,
+      `${runtimeEnv.BACKEND_URL}/options/category?category_id=${categoryId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

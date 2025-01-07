@@ -6,6 +6,8 @@ import { cookies } from 'next/headers';
 
 import type { JwtPayload } from '@/types';
 
+import { runtimeEnv } from '@/config/env';
+
 class AuthenticationError extends Error {
   redirect: boolean;
   constructor(message: string, redirect: boolean) {
@@ -28,14 +30,11 @@ export async function fetchUserData() {
     const token = getToken();
     const decoded = decodeJwt(token) as JwtPayload;
 
-    const response = await fetch(
-      'https://helpdesk-staging.alphaspiderman.dev/api/me',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
