@@ -1,30 +1,57 @@
-import Link from 'next/link';
-export default function AdminLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
-    return (
-        <div className="flex h-[calc(100vh-theme(spacing.16)-theme(spacing.12))]  w-full overflow-hidden bg-gray-100 rounded-lg">
-            {/* Sidebar */}
-            <aside className="h-screen w-64 shadow-lg rounded-l-lg">
-                <nav className="flex flex-col p-4 space-y-2">
-                    <Link href="/settings/sla" className="block px-4 py-2 rounded transition-colors duration-200 hover:bg-gray-200">
-                        SLA
-                    </Link>
-                    <Link href="/settings/severity" className="block px-4 py-2 rounded transition-colors duration-200 hover:bg-gray-200">
-                        Severity
-                    </Link>
-                    <Link href="/settings/support" className="block px-4 py-2 rounded transition-colors duration-200 hover:bg-gray-200">
-                        Support User
-                    </Link>
-                </nav>
-            </aside>
+'use client';
 
-            {/* Main Content */}
-            <main className="flex-grow bg-white overflow-y-auto p-4 rounded-r-lg">
-                {children}
-            </main>
-        </div>
-    );
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { cn } from '@/lib/utils';
+
+const items: {
+  name: string;
+  href: string;
+}[] = [
+  {
+    name: 'SLA',
+    href: '/settings/sla',
+  },
+  {
+    name: 'Severity',
+    href: '/settings/severity',
+  },
+  {
+    name: 'Support Users',
+    href: '/settings/support',
+  },
+];
+
+export default function AdminLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const pathname = usePathname();
+
+  return (
+    <div className="flex h-[calc(100vh-theme(spacing.16)-theme(spacing.12))] w-full space-x-2 overflow-hidden py-4">
+      {/* Sidebar */}
+      <div className="flex min-w-36 flex-col space-y-2 text-sm">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              'rounded px-4 py-2 transition-colors duration-200',
+              item.href === pathname
+                ? 'bg-accent/50 text-accent-foreground'
+                : 'hover:bg-accent/50 hover:text-accent-foreground'
+            )}
+          >
+            {item.name}
+          </Link>
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-grow overflow-y-auto">{children}</main>
+    </div>
+  );
 }

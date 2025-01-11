@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/settings',
+        destination: '/settings/sla',
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return process.env.NODE_ENV === 'production'
       ? [

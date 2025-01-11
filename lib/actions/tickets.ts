@@ -7,11 +7,8 @@ import type { Ticket } from '@/types';
 
 import { runtimeEnv } from '@/config/env';
 
-import {
-  AuthenticationError,
-  getToken,
-  handleApiResponse,
-} from '@/lib/actions/auth';
+import { getToken, handleApiResponse } from '@/lib/api';
+import { AuthenticationError } from '@/lib/api';
 
 export async function getTickets(): Promise<Ticket[]> {
   try {

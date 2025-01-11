@@ -17,8 +17,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { getJwt } from '@/lib/actions/auth';
-import { logoutUser } from '@/lib/actions/auth';
+import { getJwt, logoutUser } from '@/lib/actions/auth';
 import { cn } from '@/lib/utils';
 
 import {
@@ -170,30 +169,30 @@ export function AppSidebar() {
           <SidebarMenu>
             {isLoading
               ? Array.from({ length: 3 }).map((_, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuSkeleton showIcon />
-                </SidebarMenuItem>
-              ))
-              : items
-                .filter((item) => userData?.roles.includes(item.role))
-                .map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton tooltip={item.title} asChild>
-                      <Link
-                        href={item.url}
-                        className={cn(
-                          isActive(item.url) &&
-                          'bg-sidebar-accent text-sidebar-accent-foreground'
-                        )}
-                      >
-                        <item.icon
-                          weight={isActive(item.url) ? 'fill' : undefined}
-                        />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuSkeleton showIcon />
                   </SidebarMenuItem>
-                ))}
+                ))
+              : items
+                  .filter((item) => userData?.roles.includes(item.role))
+                  .map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton tooltip={item.title} asChild>
+                        <Link
+                          href={item.url}
+                          className={cn(
+                            isActive(item.url) &&
+                              'bg-sidebar-accent text-sidebar-accent-foreground'
+                          )}
+                        >
+                          <item.icon
+                            weight={isActive(item.url) ? 'fill' : undefined}
+                          />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

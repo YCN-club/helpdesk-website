@@ -6,7 +6,7 @@ import type { JwtPayload } from '@/types';
 
 import { runtimeEnv } from '@/config/env';
 
-import { getToken } from '@/lib/actions/auth';
+import { getToken } from '@/lib/api';
 
 class AuthenticationError extends Error {
   redirect: boolean;
