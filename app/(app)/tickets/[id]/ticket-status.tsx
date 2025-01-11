@@ -1,3 +1,4 @@
+'use client';
 import type { TicketDetails } from '@/types';
 
 import { toTitleCase } from '@/lib/utils';

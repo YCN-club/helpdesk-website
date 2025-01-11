@@ -1,3 +1,7 @@
+'use client';
+
+import type { LucideIcon } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
@@ -6,10 +10,12 @@ export function LabelBadge({
   name,
   color,
   className,
+  icon: IconComponent,
 }: {
   name: string;
   color: string;
   className?: string;
+  icon?: LucideIcon;
 }) {
   // Function to determine if the text should be dark or light
   const shouldUseDarkText = (hexColor: string) => {
@@ -26,7 +32,7 @@ export function LabelBadge({
   return (
     <Badge
       className={cn(
-        'border-0 px-2 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1 border-0 px-2 py-0.5 text-xs font-medium',
         'transition-opacity hover:opacity-80',
         className
       )}
@@ -35,6 +41,7 @@ export function LabelBadge({
         color: textColor,
       }}
     >
+      {IconComponent && <IconComponent className="size-4" />}
       {name}
     </Badge>
   );
