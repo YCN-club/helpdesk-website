@@ -77,9 +77,9 @@ const items = [
   },
   {
     title: 'Admin Settings',
-    url: '/settings',
+    url: '/settings/sla',
     icon: GearSix,
-    role: 'admin',
+    role: 'sys_admin',
   },
 ] satisfies {
   title: string;
@@ -170,30 +170,30 @@ export function AppSidebar() {
           <SidebarMenu>
             {isLoading
               ? Array.from({ length: 3 }).map((_, index) => (
-                  <SidebarMenuItem key={index}>
-                    <SidebarMenuSkeleton showIcon />
-                  </SidebarMenuItem>
-                ))
+                <SidebarMenuItem key={index}>
+                  <SidebarMenuSkeleton showIcon />
+                </SidebarMenuItem>
+              ))
               : items
-                  .filter((item) => userData?.roles.includes(item.role))
-                  .map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton tooltip={item.title} asChild>
-                        <Link
-                          href={item.url}
-                          className={cn(
-                            isActive(item.url) &&
-                              'bg-sidebar-accent text-sidebar-accent-foreground'
-                          )}
-                        >
-                          <item.icon
-                            weight={isActive(item.url) ? 'fill' : undefined}
-                          />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                .filter((item) => userData?.roles.includes(item.role))
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton tooltip={item.title} asChild>
+                      <Link
+                        href={item.url}
+                        className={cn(
+                          isActive(item.url) &&
+                          'bg-sidebar-accent text-sidebar-accent-foreground'
+                        )}
+                      >
+                        <item.icon
+                          weight={isActive(item.url) ? 'fill' : undefined}
+                        />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
