@@ -10,6 +10,10 @@ const items: {
   href: string;
 }[] = [
   {
+    name: 'Categories',
+    href: '/settings/categories',
+  },
+  {
     name: 'SLA',
     href: '/settings/sla',
   },
