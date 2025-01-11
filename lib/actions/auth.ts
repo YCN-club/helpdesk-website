@@ -12,7 +12,8 @@ import { runtimeEnv } from '@/config/env';
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 
-class AuthenticationError extends Error {
+// Custom error classes
+export class AuthenticationError extends Error {
   constructor(
     message = 'Authentication required',
     public expired = false
@@ -22,7 +23,7 @@ class AuthenticationError extends Error {
   }
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(
     message: string,
     public status: number
@@ -32,11 +33,29 @@ class ApiError extends Error {
   }
 }
 
+// Helper function to handle API responses
+export async function handleApiResponse(response: Response) {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      throw new AuthenticationError(
+        'Session expired. Please log in again.',
+        true
+      );
+    }
+    throw new ApiError(
+      errorData.message || `API error: ${response.statusText}`,
+      response.status
+    );
+  }
+  return response.json();
+}
+
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getToken(): string {
+export function getToken(): string {
   const token = cookies().get('JWT_TOKEN')?.value;
   if (!token) {
     throw new AuthenticationError('No JWT token found', true);

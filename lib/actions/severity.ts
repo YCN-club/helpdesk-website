@@ -12,24 +12,25 @@ import {
   handleApiResponse,
 } from '@/lib/actions/auth';
 
-export async function getSlas(): Promise<Ticket['sla'][]> {
+export async function getCategories(): Promise<
+  Ticket['subcategory']['category'][]
+> {
   try {
     const token = getToken();
-    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/sla`, {
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/severity`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       cache: 'no-store',
     });
-
     const data = await handleApiResponse(response);
-    return data.slas;
+    return data.options;
   } catch (error) {
     if (error instanceof AuthenticationError && error.expired) {
       redirect('/?session_expired=true');
     }
-    console.error('Error fetching tickets:', error);
+    console.error(`Error getting categories:`, error);
     throw error;
   }
 }
