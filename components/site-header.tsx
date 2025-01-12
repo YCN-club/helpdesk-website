@@ -1,12 +1,13 @@
 'use client';
 
-import { siteConfig } from '@/config/site';
 import { UserCircle } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+import { siteConfig } from '@/config/site';
 
 import { cn } from '@/lib/utils';
 

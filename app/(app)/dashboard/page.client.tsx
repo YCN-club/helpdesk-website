@@ -1,9 +1,13 @@
 'use client';
 
 import { MagnifyingGlass } from '@phosphor-icons/react';
-import { Ticket } from '@/types';
+
 import { useEffect, useState } from 'react';
-import { DataTable } from './data-table';
+
+import { Ticket } from '@/types';
+
+import { getTickets } from '@/lib/actions/tickets';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,10 +27,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { getTickets } from '@/lib/actions/tickets';
+import { DataTable } from './data-table';
 
 export default function DashboardPageClient() {
-
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,19 +62,25 @@ export default function DashboardPageClient() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.ticket_status === 'OPEN').length}</CardTitle>
+              <CardTitle>
+                {tickets.filter((t) => t.ticket_status === 'OPEN').length}
+              </CardTitle>
               <CardDescription>Open Tickets</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.ticket_status === 'CLOSED').length}</CardTitle>
+              <CardTitle>
+                {tickets.filter((t) => t.ticket_status === 'CLOSED').length}
+              </CardTitle>
               <CardDescription>Completed Tickets</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{tickets.filter((t) => t.assignee.name === 'Unassigned').length}</CardTitle>
+              <CardTitle>
+                {tickets.filter((t) => t.assignee.name === 'Unassigned').length}
+              </CardTitle>
               <CardDescription>Unassigned Tickets</CardDescription>
             </CardHeader>
           </Card>
@@ -86,8 +95,8 @@ export default function DashboardPageClient() {
           <CardContent>
             <DataTable data={tickets} />
           </CardContent>
-        </Card >
-      </div >
-    </div >
+        </Card>
+      </div>
+    </div>
   );
 }
