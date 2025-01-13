@@ -55,7 +55,7 @@ type SupportStaffFormValues = z.infer<typeof supportStaffSchema>;
 
 export default function SupportPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [supportStaff, setSupportStaff] = useState<SupportStaff[] | null>(null);
+  const [supportStaff, setSupportStaff] = useState<SupportStaff[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const form = useForm<SupportStaffFormValues>({
@@ -126,13 +126,21 @@ export default function SupportPage() {
         </div>
         <div className="space-y-4">
           {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-          ) : (
-            supportStaff?.map((staff) => (
+            Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex items-center justify-between rounded border p-4">
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-5 w-1/3" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="flex space-x-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </div>
+            ))
+          ) : supportStaff.length > 0 ? (
+            supportStaff.map((staff) => (
               <div
                 key={staff.id}
                 className="flex items-center justify-between rounded border p-4"
@@ -170,6 +178,8 @@ export default function SupportPage() {
                 </div>
               </div>
             ))
+          ) : (
+            <p>No support staff found.</p>
           )}
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -230,3 +240,4 @@ export default function SupportPage() {
     </TooltipProvider>
   );
 }
+
