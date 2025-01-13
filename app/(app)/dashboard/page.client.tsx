@@ -1,15 +1,9 @@
 'use client';
 
-import { MagnifyingGlass } from '@phosphor-icons/react';
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Ticket } from '@/types';
 
-import { getTickets } from '@/lib/actions/tickets';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -17,44 +11,19 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
 import { DataTable } from './data-table';
 
-export default function DashboardPageClient() {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function DashboardPageClient({
+  tickets,
+}: {
+  tickets: Ticket[];
+}) {
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        const fetchedTickets = await getTickets();
-        setTickets(fetchedTickets);
-      } catch (err) {
-        setError('Failed to fetch tickets.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTickets();
-  }, []);
 
   const filteredTickets = tickets.filter((ticket) =>
     ticket.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div className="mx-auto max-w-screen-lg py-6">
