@@ -1,6 +1,6 @@
-import { siteConfig } from '@/config/site';
-
 import type { Metadata, Viewport } from 'next';
+
+import { siteConfig } from '@/config/site';
 
 import { fontMono, fontSans } from '@/lib/fonts';
 import { cn } from '@/lib/utils';

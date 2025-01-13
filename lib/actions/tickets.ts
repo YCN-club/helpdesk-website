@@ -1,60 +1,14 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import type { Ticket } from '@/types';
 
 import { runtimeEnv } from '@/config/env';
 
-// Custom error classes
-class AuthenticationError extends Error {
-  constructor(
-    message = 'Authentication required',
-    public expired = false
-  ) {
-    super(message);
-    this.name = 'AuthenticationError';
-  }
-}
-
-class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
-
-// Helper function to get token
-function getToken(): string {
-  const token = cookies().get('JWT_TOKEN')?.value;
-  if (!token) {
-    throw new AuthenticationError('Authentication required', true);
-  }
-  return token;
-}
-
-// Helper function to handle API responses
-async function handleApiResponse(response: Response) {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    if (response.status === 401) {
-      throw new AuthenticationError(
-        'Session expired. Please log in again.',
-        true
-      );
-    }
-    throw new ApiError(
-      errorData.message || `API error: ${response.statusText}`,
-      response.status
-    );
-  }
-  return response.json();
-}
+import { getToken, handleApiResponse } from '@/lib/api';
+import { AuthenticationError } from '@/lib/api';
 
 export async function getTickets(): Promise<Ticket[]> {
   try {
@@ -205,54 +159,6 @@ export async function addTicketMessage(ticketId: string, message: string) {
       redirect('/?session_expired=true');
     }
     console.error(`Error adding message to ticket ${ticketId}:`, error);
-    throw error;
-  }
-}
-
-export async function getCategories() {
-  try {
-    const token = getToken();
-    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/category`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-    const data = await handleApiResponse(response);
-    return data.options;
-  } catch (error) {
-    if (error instanceof AuthenticationError && error.expired) {
-      redirect('/?session_expired=true');
-    }
-    console.error(`Error getting categories:`, error);
-    throw error;
-  }
-}
-
-export async function getSubcategories(categoryId: string) {
-  try {
-    const token = getToken();
-    const response = await fetch(
-      `${runtimeEnv.BACKEND_URL}/options/category?category_id=${categoryId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      }
-    );
-    const data = await handleApiResponse(response);
-    return data.options;
-  } catch (error) {
-    if (error instanceof AuthenticationError && error.expired) {
-      redirect('/?session_expired=true');
-    }
-    console.error(
-      `Error getting subcategories for category ${categoryId}:`,
-      error
-    );
     throw error;
   }
 }

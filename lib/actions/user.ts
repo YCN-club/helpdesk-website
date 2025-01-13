@@ -2,11 +2,11 @@
 
 import { decodeJwt } from 'jose';
 
-import { cookies } from 'next/headers';
-
 import type { JwtPayload } from '@/types';
 
 import { runtimeEnv } from '@/config/env';
+
+import { getToken } from '@/lib/api';
 
 class AuthenticationError extends Error {
   redirect: boolean;
@@ -15,14 +15,6 @@ class AuthenticationError extends Error {
     this.name = 'AuthenticationError';
     this.redirect = redirect;
   }
-}
-
-function getToken(): string {
-  const token = cookies().get('JWT_TOKEN')?.value;
-  if (!token) {
-    throw new AuthenticationError('No JWT token found', true);
-  }
-  return token;
 }
 
 export async function fetchUserData() {

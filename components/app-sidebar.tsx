@@ -17,8 +17,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { getJwt } from '@/lib/actions/auth';
-import { logoutUser } from '@/lib/actions/auth';
+import { getJwt, logoutUser } from '@/lib/actions/auth';
 import { cn } from '@/lib/utils';
 
 import {
@@ -77,9 +76,9 @@ const items = [
   },
   {
     title: 'Admin Settings',
-    url: '/settings',
+    url: '/settings/sla',
     icon: GearSix,
-    role: 'admin',
+    role: 'sys_admin',
   },
 ] satisfies {
   title: string;
