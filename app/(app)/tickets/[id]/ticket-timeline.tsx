@@ -24,8 +24,8 @@ export function TicketTimeline({
   }, [messages.length]);
 
   return (
-    <div className="flex-grow overflow-y-auto">
-      <div className="space-y-4 p-4">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex-grow space-y-4 overflow-y-auto p-4">
         {[...messages].reverse().map((message) => (
           <div key={message.id}>
             {message.type === 'SYSTEM' ? (

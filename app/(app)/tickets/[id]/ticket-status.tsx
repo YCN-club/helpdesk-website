@@ -1,26 +1,24 @@
-'use client';
+import { Check } from 'lucide-react';
+
 import type { TicketDetails } from '@/types';
 
 import { toTitleCase } from '@/lib/utils';
 
+import { LabelBadge } from '@/components/label-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
   return (
-    <Card>
-      <CardHeader>
-        <h2 className="text-lg font-semibold">Ticket Details</h2>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">Status</p>
-          <Badge
-            variant={ticket.ticket_status === 'OPEN' ? 'default' : 'secondary'}
-          >
-            {toTitleCase(ticket.ticket_status)}
-          </Badge>
+    <div className="h-full overflow-y-auto border-l pl-4">
+      <h2 className="text-lg font-semibold">Ticket Details</h2>
+      <div className="space-y-4 overflow-y-auto">
+        <div className="space-y-1">
+          {ticket.ticket_status === 'OPEN' ? (
+            <LabelBadge name="Open" color="#101010" icon={Check} />
+          ) : (
+            <Badge variant="destructive">Closed</Badge>
+          )}
         </div>
         <div>
           <p className="text-sm font-semibold text-muted-foreground">
@@ -86,7 +84,7 @@ export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
             <span>{ticket.assignee.name}</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

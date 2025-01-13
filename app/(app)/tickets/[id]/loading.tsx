@@ -34,35 +34,33 @@ export default function TicketDetailsPageSkeleton() {
             </CardContent>
           </Card>
         </div>
-        <div className="overflow-y-auto">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-1/2" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                'Status',
-                'Resolution',
-                'Subcategory',
-                'Severity',
-                'SLA',
-                'Created',
-                'Assignee',
-              ].map((item, index) => (
-                <div key={index}>
-                  <Skeleton className="mb-1 h-4 w-1/3" />
-                  {item === 'Assignee' ? (
-                    <div className="flex items-center space-x-2">
-                      <Skeleton className="h-6 w-6 rounded-full" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  ) : (
-                    <Skeleton className="h-6 w-1/2" />
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+        <div className="h-full overflow-y-auto border-l pl-4">
+          <CardHeader>
+            <Skeleton className="h-6 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[
+              'Status',
+              'Resolution',
+              'Subcategory',
+              'Severity',
+              'SLA',
+              'Created',
+              'Assignee',
+            ].map((item, index) => (
+              <div key={index}>
+                <Skeleton className="mb-1 h-4 w-1/3" />
+                {item === 'Assignee' ? (
+                  <div className="flex items-center space-x-2">
+                    <Skeleton className="h-6 w-6 rounded-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ) : (
+                  <Skeleton className="h-6 w-1/2" />
+                )}
+              </div>
+            ))}
+          </CardContent>
         </div>
       </div>
     </div>

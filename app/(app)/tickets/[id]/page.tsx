@@ -1,4 +1,5 @@
 import { decodeJwt } from 'jose';
+import { Check, X } from 'lucide-react';
 
 import { Suspense } from 'react';
 
@@ -10,6 +11,8 @@ import type { JwtPayload } from '@/types';
 
 import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
 
+import { RoleCheck } from '@/components/role-check';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { NewMessageForm } from '@/app/(app)/tickets/[id]/new-message-form';
@@ -76,29 +79,31 @@ export default async function TicketDetailsPage({ params }: Props) {
 
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16)-theme(spacing.12))] flex-col pt-4">
-      <div className="grid flex-grow grid-cols-3 gap-4 overflow-hidden">
-        <div className="col-span-2 flex flex-col overflow-hidden">
-          <Card className="flex h-full flex-col">
-            <CardHeader className="flex-shrink-0">
-              <div className="flex flex-col">
-                <h2 className="text-lg font-semibold">{ticket.title}</h2>
-                <span className="text-sm text-muted-foreground">
-                  ID: {ticket.id}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-grow flex-col overflow-hidden">
-              <Suspense fallback={<div>Loading messages...</div>}>
-                <TicketTimeline
-                  messages={messagesData.messages}
-                  currentUserId={currentUserId}
-                />
-              </Suspense>
-              <NewMessageForm ticketId={params.id} />
-            </CardContent>
-          </Card>
+      <div className="flex w-full items-center justify-between border-b pb-8 pt-4">
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold">{ticket.title}</h2>
+          <span className="text-sm text-muted-foreground">ID: {ticket.id}</span>
         </div>
-        <div className="overflow-y-auto">
+        <div className="flex space-x-2">
+          <RoleCheck role="user" fallback={<></>}>
+            <Button variant="secondary">
+              <Check /> Mark as Resolved
+            </Button>
+            <Button variant="secondary">
+              <X /> Close Ticket
+            </Button>
+          </RoleCheck>
+        </div>
+      </div>
+      <div className="grid flex-grow grid-cols-3 gap-4 overflow-hidden pt-8">
+        <div className="col-span-2 flex flex-col overflow-hidden">
+          <TicketTimeline
+            messages={messagesData.messages}
+            currentUserId={currentUserId}
+          />
+          <NewMessageForm ticketId={params.id} />
+        </div>
+        <div>
           <TicketStatus ticket={ticket} />
         </div>
       </div>
