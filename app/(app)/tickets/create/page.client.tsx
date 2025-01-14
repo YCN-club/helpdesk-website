@@ -12,11 +12,8 @@ import { useRouter } from 'next/navigation';
 
 import { runtimeEnv } from '@/config/env';
 
-import {
-  createTicket,
-  getCategories,
-  getSubcategories,
-} from '@/lib/actions/tickets';
+import { getCategories, getSubcategories } from '@/lib/actions/categories';
+import { createTicket } from '@/lib/actions/tickets';
 
 import { Button } from '@/components/ui/button';
 import {
