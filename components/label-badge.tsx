@@ -32,7 +32,7 @@ export function LabelBadge({
   return (
     <Badge
       className={cn(
-        'inline-flex items-center gap-1 border-0 px-2 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1 border-0 px-2 py-1 text-xs font-medium',
         'transition-opacity hover:opacity-80',
         className
       )}
