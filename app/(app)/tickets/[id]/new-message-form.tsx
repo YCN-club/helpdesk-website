@@ -29,7 +29,10 @@ export function NewMessageForm({ ticketId }: { ticketId: string }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 flex items-center space-x-2">
+    <form
+      onSubmit={handleSubmit}
+      className="mt-4 flex items-center space-x-2 pb-1 pl-1"
+    >
       <Input
         value={message}
         onChange={(e) => setMessage(e.target.value)}

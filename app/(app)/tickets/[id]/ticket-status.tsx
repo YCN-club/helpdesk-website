@@ -52,19 +52,6 @@ export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
           <Badge>{ticket.sla.name}</Badge>
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-semibold text-muted-foreground">Created</p>
-          <p>{new Date(ticket.created_at).toLocaleString()}</p>
-        </div>
-        {ticket.closed_at && (
-          <div>
-            <p className="text-sm font-semibold text-muted-foreground">
-              Closed
-            </p>
-            <p>{new Date(ticket.closed_at).toLocaleString()}</p>
-          </div>
-        )}
-
-        <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground">
             Assignee
           </p>
