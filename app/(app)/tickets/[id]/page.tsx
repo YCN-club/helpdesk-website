@@ -1,6 +1,5 @@
 import { decodeJwt } from 'jose';
-
-import { Suspense } from 'react';
+import { Archive, Calendar, Check, CircleDot, Info, X } from 'lucide-react';
 
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
@@ -10,7 +9,13 @@ import type { JwtPayload } from '@/types';
 
 import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { RoleCheck } from '@/components/role-check';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { NewMessageForm } from '@/app/(app)/tickets/[id]/new-message-form';
 import { TicketStatus } from '@/app/(app)/tickets/[id]/ticket-status';
@@ -76,29 +81,67 @@ export default async function TicketDetailsPage({ params }: Props) {
 
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16)-theme(spacing.12))] flex-col pt-4">
-      <div className="grid flex-grow grid-cols-3 gap-4 overflow-hidden">
-        <div className="col-span-2 flex flex-col overflow-hidden">
-          <Card className="flex h-full flex-col">
-            <CardHeader className="flex-shrink-0">
-              <div className="flex flex-col">
-                <h2 className="text-lg font-semibold">{ticket.title}</h2>
-                <span className="text-sm text-muted-foreground">
-                  ID: {ticket.id}
-                </span>
+      <div className="flex w-full items-center justify-between border-b pb-8 pt-4">
+        <div className="flex flex-col">
+          <div className="flex items-center space-x-2">
+            <h2 className="text-lg font-semibold">{ticket.title}</h2>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-4 w-4" />
+              </TooltipTrigger>
+              <TooltipContent>Ticket ID: {ticket.id}</TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="mt-1 flex items-center space-x-4">
+            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(ticket.created_at).toLocaleString()}</span>
+            </div>
+            {ticket.closed_at && (
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                <Archive className="h-4 w-4" />
+                <span>{new Date(ticket.closed_at).toLocaleString()}</span>
               </div>
-            </CardHeader>
-            <CardContent className="flex flex-grow flex-col overflow-hidden">
-              <Suspense fallback={<div>Loading messages...</div>}>
-                <TicketTimeline
-                  messages={messagesData.messages}
-                  currentUserId={currentUserId}
-                />
-              </Suspense>
-              <NewMessageForm ticketId={params.id} />
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
-        <div className="overflow-y-auto">
+        <div className="flex space-x-2">
+          <RoleCheck role="user" fallback={<></>}>
+            {ticket.ticket_status === 'CLOSED' ? (
+              <Button variant="secondary">
+                <CircleDot /> Reopen Ticket
+              </Button>
+            ) : ticket.resolution_status === 'RESOLVED' ? (
+              <>
+                <Button variant="secondary">
+                  <X /> Mark as Unresolved
+                </Button>
+                <Button variant="secondary">
+                  <X /> Close Ticket
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="secondary">
+                  <Check /> Mark as Resolved
+                </Button>
+                <Button variant="secondary">
+                  <X /> Close Ticket
+                </Button>
+              </>
+            )}
+          </RoleCheck>
+        </div>
+      </div>
+      <div className="grid flex-grow grid-cols-3 gap-4 overflow-hidden pt-8">
+        <div className="col-span-2 flex flex-col overflow-hidden">
+          <TicketTimeline
+            messages={messagesData.messages}
+            currentUserId={currentUserId}
+          />
+          <NewMessageForm ticketId={params.id} />
+        </div>
+        <div>
           <TicketStatus ticket={ticket} />
         </div>
       </div>

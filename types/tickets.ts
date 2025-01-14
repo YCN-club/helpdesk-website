@@ -53,8 +53,11 @@ export interface TicketDetails {
   };
   subcategory: {
     id: string;
-    category_id: string;
     name: string;
+    category: {
+      id: string;
+      name: string;
+    };
   };
   assignee: {
     id: string;

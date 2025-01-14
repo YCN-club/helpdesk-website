@@ -1,5 +1,6 @@
 'use client';
 
+import { CaretUpDown, MagnifyingGlass } from '@phosphor-icons/react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 import * as React from 'react';
@@ -59,7 +60,7 @@ const columns: ColumnDef<Ticket>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <CaretUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -203,7 +204,8 @@ export function DataTable({ data }: { data: Ticket[] }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center space-x-2 py-4">
+        <MagnifyingGlass className="h-6 w-6 text-muted-foreground" />
         <Input
           placeholder="Filter tickets..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}

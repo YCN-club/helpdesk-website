@@ -1,72 +1,56 @@
 'use client';
+
+import { Check, ChevronRight, CircleDot, CircleX, X } from 'lucide-react';
+
 import type { TicketDetails } from '@/types';
 
 import { toTitleCase } from '@/lib/utils';
 
+import { LabelBadge } from '@/components/label-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
   return (
-    <Card>
-      <CardHeader>
-        <h2 className="text-lg font-semibold">Ticket Details</h2>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">Status</p>
-          <Badge
-            variant={ticket.ticket_status === 'OPEN' ? 'default' : 'secondary'}
-          >
-            {toTitleCase(ticket.ticket_status)}
-          </Badge>
+    <div className="h-full overflow-y-auto border-l pl-4">
+      <h2 className="pb-2 text-lg font-semibold">Ticket Details</h2>
+      <div className="space-y-4 overflow-y-auto">
+        <div className="flex items-center space-x-1">
+          {ticket.ticket_status === 'OPEN' ? (
+            <LabelBadge name="Open" color="#008240" icon={CircleDot} />
+          ) : (
+            <LabelBadge name="Closed" color="#9c0909" icon={CircleX} />
+          )}
+          {ticket.resolution_status === 'RESOLVED' ? (
+            <LabelBadge name="Resolved" color="#008240" icon={Check} />
+          ) : (
+            <LabelBadge name="Unresolved" color="#9c0909" icon={X} />
+          )}
         </div>
-        <div>
+        <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground">
-            Resolution
+            Category
           </p>
-          <Badge
-            variant={
-              ticket.resolution_status === 'UNRESOLVED'
-                ? 'destructive'
-                : 'default'
-            }
-          >
-            {toTitleCase(ticket.resolution_status)}
-          </Badge>
+          <div className="flex items-center space-x-0.5">
+            <Badge>{toTitleCase(ticket.subcategory.category.name)}</Badge>
+            <ChevronRight className="size-4" />
+            <Badge variant="secondary">
+              {toTitleCase(ticket.subcategory.name)}
+            </Badge>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">
-            Subcategory
-          </p>
-          <Badge>{toTitleCase(ticket.subcategory.name)}</Badge>
-        </div>
-        <div>
+        <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground">
             Severity
           </p>
-          <p>
+          <Badge>
             {ticket.severity.name} (Level {ticket.severity.level})
-          </p>
+          </Badge>
         </div>
-        <div>
+        <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground">SLA</p>
-          <p>{ticket.sla.name}</p>
+          <Badge>{ticket.sla.name}</Badge>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">Created</p>
-          <p>{new Date(ticket.created_at).toLocaleString()}</p>
-        </div>
-        {ticket.closed_at && (
-          <div>
-            <p className="text-sm font-semibold text-muted-foreground">
-              Closed
-            </p>
-            <p>{new Date(ticket.closed_at).toLocaleString()}</p>
-          </div>
-        )}
-
         <div className="space-y-1">
           <p className="text-sm font-semibold text-muted-foreground">
             Assignee
@@ -86,7 +70,7 @@ export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
             <span>{ticket.assignee.name}</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
