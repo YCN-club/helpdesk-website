@@ -1,6 +1,6 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import type { Ticket } from '@/types';
@@ -28,7 +28,7 @@ class ApiError extends Error {
 }
 // Helper function to get token
 function getToken(): string {
-  const token = cookies().get('JWT_TOKEN')?.value;
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('JWT_TOKEN')?.value;
   if (!token) {
     throw new AuthenticationError('Authentication required', true);
   }

@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 
 export class AuthenticationError extends Error {
   constructor(
@@ -21,7 +21,7 @@ export class ApiError extends Error {
 }
 
 export function getToken(): string {
-  const token = cookies().get('JWT_TOKEN')?.value;
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('JWT_TOKEN')?.value;
   if (!token) {
     throw new AuthenticationError('No JWT token found', true);
   }

@@ -72,7 +72,7 @@ export async function registerUser(
 
     if (response.ok && responseData.authenticated) {
       // Set the new JWT_TOKEN cookie
-      cookies().set('JWT_TOKEN', responseData.token, {
+      (await cookies()).set('JWT_TOKEN', responseData.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -120,6 +120,6 @@ export async function registerUser(
 }
 
 export async function logoutUser() {
-  cookies().delete('JWT_TOKEN');
+  (await cookies()).delete('JWT_TOKEN');
   redirect('/');
 }

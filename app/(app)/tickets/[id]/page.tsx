@@ -22,13 +22,11 @@ import { TicketStatus } from '@/app/(app)/tickets/[id]/ticket-status';
 import { TicketTimeline } from '@/app/(app)/tickets/[id]/ticket-timeline';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   try {
     const ticketDetailsData = await getTicketDetails(params.id);
 
@@ -51,7 +49,8 @@ export async function generateMetadata(
   }
 }
 
-export default async function TicketDetailsPage({ params }: Props) {
+export default async function TicketDetailsPage(props: Props) {
+  const params = await props.params;
   const [messagesData, ticketDetailsData] = await Promise.all([
     getTicketMessages(params.id),
     getTicketDetails(params.id),
@@ -66,7 +65,7 @@ export default async function TicketDetailsPage({ params }: Props) {
 
   const { ticket } = ticketDetailsData;
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('JWT_TOKEN')?.value;
   let currentUserId = null;
 

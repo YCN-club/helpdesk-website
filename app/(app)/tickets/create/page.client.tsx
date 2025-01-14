@@ -10,8 +10,6 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { runtimeEnv } from '@/config/env';
-
 import { getCategories, getSubcategories } from '@/lib/actions/categories';
 import { createTicket } from '@/lib/actions/tickets';
 
