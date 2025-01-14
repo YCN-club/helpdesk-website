@@ -32,6 +32,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
@@ -84,105 +85,114 @@ export default function SLA() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Service Level Agreement</h1>
-        <Button
-          variant="default"
-          size="icon"
-          onClick={() => setDialogOpen(true)}
-        >
-          <Plus />
-        </Button>
-      </div>
-      <div className="mt-4">
-        {slas === null ? (
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-        ) : (
-          slas.map((sla) => (
-            <div
-              key={sla.id}
-              className="mb-2 flex justify-between rounded border p-4"
-            >
-              <div>
-                <h2 className="font-semibold">{sla.name}</h2>
-                <p className="text-sm text-muted-foreground">{sla.note}</p>
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Deleting items is yet to be implemented
-                </TooltipContent>
-              </Tooltip>
+    <TooltipProvider>
+      <div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Service Level Agreement</h1>
+          <Button
+            variant="default"
+            size="icon"
+            onClick={() => setDialogOpen(true)}
+          >
+            <Plus />
+          </Button>
+        </div>
+        <div className="mt-4">
+          {slas === null ? (
+            <div className="space-y-2">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="mb-2 flex justify-between rounded border p-4">
+                  <div>
+                    <Skeleton className="h-5 w-32 mb-2" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              ))}
             </div>
-          ))
-        )}
+          ) : (
+            slas.map((sla) => (
+              <div
+                key={sla.id}
+                className="mb-2 flex justify-between rounded border p-4"
+              >
+                <div>
+                  <h2 className="font-semibold">{sla.name}</h2>
+                  <p className="text-sm text-muted-foreground">{sla.note}</p>
+                </div>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Deleting items is yet to be implemented
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            ))
+          )}
+        </div>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create SLA</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter SLA name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter SLA description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="responseTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Response Time (hours)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter response time in hours"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Creating...' : 'Create SLA'}
+                </Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create SLA</DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter SLA name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter SLA description" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="responseTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Response Time (hours)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter response time in hours"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Create SLA'}
-              </Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </TooltipProvider>
   );
 }
+
