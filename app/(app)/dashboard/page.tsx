@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const tickets = await getTickets();
+  const tickets = await getTickets(false);
 
   return <DashboardPageClient tickets={tickets} />;
 }

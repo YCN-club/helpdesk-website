@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TicketsPage() {
-  const tickets = await getTickets();
+  const tickets = await getTickets(true);
 
   return (
     <div className="mx-auto max-w-screen-xl py-6">

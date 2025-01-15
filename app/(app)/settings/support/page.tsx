@@ -33,6 +33,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+// Removed duplicate default export function
+
 interface SupportStaff {
   id: string;
   name: string;
@@ -128,8 +130,11 @@ export default function SupportPage() {
         <div className="space-y-4">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="flex items-center justify-between rounded border p-4">
-                <div className="space-y-2 flex-1">
+              <div
+                key={index}
+                className="flex items-center justify-between rounded border p-4"
+              >
+                <div className="flex-1 space-y-2">
                   <Skeleton className="h-5 w-1/3" />
                   <Skeleton className="h-4 w-1/2" />
                   <Skeleton className="h-4 w-1/4" />
@@ -241,4 +246,3 @@ export default function SupportPage() {
     </TooltipProvider>
   );
 }
-
