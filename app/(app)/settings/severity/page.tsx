@@ -114,15 +114,15 @@ export default function SettingsSeverityPage() {
               className="flex justify-between rounded border p-4"
             >
               <div className="flex items-center space-x-4">
-                <span>{severity.name}</span>
                 <div
-                  className="h-6 w-6 cursor-pointer rounded-full border border-gray-300"
+                  className="size-6 rounded-full border border-muted"
                   style={{ backgroundColor: severity.color }}
                 />
+                <span>{severity.name}</span>
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="rounded-full">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>

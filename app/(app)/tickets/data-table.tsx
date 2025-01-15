@@ -1,5 +1,6 @@
 'use client';
 
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -203,7 +204,8 @@ export function DataTable({ data }: { data: Ticket[] }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center space-x-2 py-4">
+        <MagnifyingGlass className="h-6 w-6 text-muted-foreground" />
         <Input
           placeholder="Filter tickets..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}

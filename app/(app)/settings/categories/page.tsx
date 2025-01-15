@@ -1,14 +1,14 @@
 'use client';
 
-import { ChevronRight, Plus, Trash2 } from 'lucide-react';
+import { ChevronRight, Edit, Plus, Trash2 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
 import { getCategories, getSubcategories } from '@/lib/actions/categories';
 
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
   TooltipContent,
@@ -58,9 +58,9 @@ export default function SettingsCategoriesPage() {
               {[...Array(3)].map((_, index) => (
                 <Card key={index} className="w-full">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="mb-4 flex items-center justify-between">
                       <div>
-                        <Skeleton className="h-6 w-32 mb-2" />
+                        <Skeleton className="mb-2 h-6 w-32" />
                         <Skeleton className="h-4 w-24" />
                       </div>
                       <div className="flex items-center space-x-2">
@@ -71,7 +71,10 @@ export default function SettingsCategoriesPage() {
                     </div>
                     <div className="space-y-2">
                       {[...Array(3)].map((_, subIndex) => (
-                        <div key={subIndex} className="flex items-center justify-between rounded-md border p-4">
+                        <div
+                          key={subIndex}
+                          className="flex items-center justify-between rounded-md border p-4"
+                        >
                           <Skeleton className="h-4 w-24" />
                           <Skeleton className="h-8 w-8 rounded-full" />
                         </div>
@@ -93,12 +96,20 @@ export default function SettingsCategoriesPage() {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
-                        Edit
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                      >
+                        <Edit className="size-4" />
                       </Button>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button variant="ghost" size="icon">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
@@ -119,7 +130,11 @@ export default function SettingsCategoriesPage() {
                           <span className="text-sm">{subcat.name}</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-full"
+                              >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
@@ -140,4 +155,3 @@ export default function SettingsCategoriesPage() {
     </TooltipProvider>
   );
 }
-

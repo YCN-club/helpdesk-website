@@ -35,9 +35,9 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex h-[calc(100vh-theme(spacing.16)-theme(spacing.12))] w-full space-x-2 overflow-hidden py-4">
+    <div className="flex h-[calc(100vh-theme(spacing.12)-theme(spacing.8))] w-full">
       {/* Sidebar */}
-      <div className="flex min-w-36 flex-col space-y-2 text-sm">
+      <div className="fixed flex h-full min-w-36 flex-col space-y-2 py-4 text-sm">
         {items.map((item) => (
           <Link
             key={item.href}
@@ -55,7 +55,9 @@ export default function AdminLayout({
       </div>
 
       {/* Main Content */}
-      <main className="flex-grow overflow-y-auto px-4">{children}</main>
+      <main className="ml-36 h-full flex-grow overflow-y-auto px-4 py-4">
+        {children}
+      </main>
     </div>
   );
 }

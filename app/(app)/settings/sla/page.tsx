@@ -101,9 +101,12 @@ export default function SLA() {
           {slas === null ? (
             <div className="space-y-2">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="mb-2 flex justify-between rounded border p-4">
+                <div
+                  key={index}
+                  className="mb-2 flex justify-between rounded border p-4"
+                >
                   <div>
-                    <Skeleton className="h-5 w-32 mb-2" />
+                    <Skeleton className="mb-2 h-5 w-32" />
                     <Skeleton className="h-4 w-48" />
                   </div>
                   <Skeleton className="h-8 w-8 rounded-full" />
@@ -122,7 +125,11 @@ export default function SLA() {
                 </div>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -140,7 +147,10 @@ export default function SLA() {
               <DialogTitle>Create SLA</DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -195,4 +205,3 @@ export default function SLA() {
     </TooltipProvider>
   );
 }
-

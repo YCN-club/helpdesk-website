@@ -12,7 +12,7 @@ export function LabelBadge({
   className,
   icon: IconComponent,
 }: {
-  name: string;
+  name?: string;
   color: string;
   className?: string;
   icon?: LucideIcon;
