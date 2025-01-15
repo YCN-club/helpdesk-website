@@ -19,7 +19,7 @@ class AuthenticationError extends Error {
 
 export async function fetchUserData() {
   try {
-    const token = getToken();
+    const token = await getToken();
     const decoded = decodeJwt(token) as JwtPayload;
 
     const response = await fetch(`${runtimeEnv.BACKEND_URL}/me`, {

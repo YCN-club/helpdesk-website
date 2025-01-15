@@ -1,6 +1,6 @@
 'use server';
 
-import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import type { Ticket } from '@/types';
@@ -27,8 +27,9 @@ class ApiError extends Error {
   }
 }
 // Helper function to get token
-function getToken(): string {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('JWT_TOKEN')?.value;
+async function getToken(): Promise<string> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('JWT_TOKEN')?.value;
   if (!token) {
     throw new AuthenticationError('Authentication required', true);
   }
@@ -53,7 +54,7 @@ async function handleApiResponse(response: Response) {
 }
 export async function getSlas(): Promise<Ticket['sla'][]> {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/sla`, {
       headers: {
         Authorization: `Bearer ${token}`,

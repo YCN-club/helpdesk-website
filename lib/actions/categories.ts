@@ -13,7 +13,7 @@ export async function getCategories(): Promise<
   Ticket['subcategory']['category'][]
 > {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/category`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ export async function getSubcategories(
   categoryId: string
 ): Promise<{ id: string; category_id: string; name: string }[]> {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(
       `${runtimeEnv.BACKEND_URL}/options/category?category_id=${categoryId}`,
       {

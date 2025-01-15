@@ -21,7 +21,7 @@ async function delay(ms: number) {
 
 export async function getJwt(): Promise<JwtPayload> {
   try {
-    const token = getToken();
+    const token = await getToken();
     const payload = (await decodeJwt(token)) as JwtPayload;
     return payload;
   } catch (error) {
@@ -38,7 +38,7 @@ export async function registerUser(
   retryCount = 0
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const token = getToken();
+    const token = await getToken();
 
     const dataToSend = new FormData();
     dataToSend.append('name', formData.get('name') as string);
@@ -75,7 +75,6 @@ export async function registerUser(
       (await cookies()).set('JWT_TOKEN', responseData.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
         path: '/',
       });
 

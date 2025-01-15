@@ -13,7 +13,7 @@ export async function getCategories(): Promise<
   Ticket['subcategory']['category'][]
 > {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/severity`, {
       headers: {
         Authorization: `Bearer ${token}`,

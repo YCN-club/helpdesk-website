@@ -12,7 +12,7 @@ import { AuthenticationError } from '@/lib/api';
 
 export async function getTickets(): Promise<Ticket[]> {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(`${runtimeEnv.BACKEND_URL}/tickets`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ export async function createTicket({
   initial_message: string;
 }) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const formData = new FormData();
     formData.append('title', title);
     formData.append('subcategory_id', subcategory_id);
@@ -70,7 +70,7 @@ export async function createTicket({
 
 export async function getTicketMessages(ticketId: string) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(
       `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/messages`,
       {
@@ -92,7 +92,7 @@ export async function getTicketMessages(ticketId: string) {
 
 export async function getTicketStatus(ticketId: string) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(
       `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/status`,
       {
@@ -118,7 +118,7 @@ export async function updateTicketStatus(
   resolution?: boolean
 ) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const formData = new FormData();
     if (status !== undefined) {
       formData.append('status', status ? 'OPEN' : 'CLOSED');
@@ -152,7 +152,7 @@ export async function updateTicketStatus(
 
 export async function getTicketDetails(ticketId: string) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const response = await fetch(
       `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}`,
       {
@@ -174,7 +174,7 @@ export async function getTicketDetails(ticketId: string) {
 
 export async function addTicketMessage(ticketId: string, message: string) {
   try {
-    const token = getToken();
+    const token = await getToken();
     const formData = new FormData();
     formData.append('content', message);
 
