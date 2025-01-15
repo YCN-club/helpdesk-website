@@ -185,7 +185,11 @@ export default async function TicketDetailsPage(props: Props) {
             messages={messagesData.messages}
             currentUserId={currentUserId}
           />
-          <NewMessageForm ticketId={params.id} />
+          {/* Only render message form if not CLOSED or RESOLVED */}
+          {ticket.ticket_status !== 'CLOSED' &&
+            ticket.resolution_status !== 'RESOLVED' && (
+              <NewMessageForm ticketId={params.id} />
+            )}
         </div>
         <div>
           <TicketStatus ticket={ticket} />

@@ -55,7 +55,7 @@ export default function AdminLayout({
       </div>
 
       {/* Main Content */}
-      <main className="flex-grow overflow-y-auto">{children}</main>
+      <main className="flex-grow overflow-y-auto px-4">{children}</main>
     </div>
   );
 }
