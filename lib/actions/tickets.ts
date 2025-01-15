@@ -112,6 +112,44 @@ export async function getTicketStatus(ticketId: string) {
   }
 }
 
+export async function updateTicketStatus(
+  ticketId: string,
+  status?: boolean,
+  resolution?: boolean
+) {
+  try {
+    const token = getToken();
+    const formData = new FormData();
+    if (status !== undefined) {
+      formData.append('status', status ? 'OPEN' : 'CLOSED');
+    }
+    if (resolution !== undefined) {
+      formData.append('resolution', resolution ? 'RESOLVED' : 'UNRESOLVED');
+    }
+
+    const response = await fetch(
+      `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}/status`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    const data = await handleApiResponse(response);
+    revalidatePath(`/tickets/${ticketId}`);
+    return data;
+  } catch (error) {
+    if (error instanceof AuthenticationError && error.expired) {
+      redirect('/?session_expired=true');
+    }
+    console.error(`Error updating status for ticket ${ticketId}:`, error);
+    throw error;
+  }
+}
+
 export async function getTicketDetails(ticketId: string) {
   try {
     const token = getToken();

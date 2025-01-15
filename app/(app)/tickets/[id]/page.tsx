@@ -7,7 +7,11 @@ import { notFound } from 'next/navigation';
 
 import type { JwtPayload } from '@/types';
 
-import { getTicketDetails, getTicketMessages } from '@/lib/actions/tickets';
+import {
+  getTicketDetails,
+  getTicketMessages,
+  updateTicketStatus,
+} from '@/lib/actions/tickets';
 
 import { RoleCheck } from '@/components/role-check';
 import { Button } from '@/components/ui/button';
@@ -25,7 +29,10 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(
+  props: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const params = await props.params;
   try {
     const ticketDetailsData = await getTicketDetails(params.id);
@@ -105,31 +112,71 @@ export default async function TicketDetailsPage(props: Props) {
           </div>
         </div>
         <div className="flex space-x-2">
-          <RoleCheck role="user" fallback={<></>}>
-            {ticket.ticket_status === 'CLOSED' ? (
-              <Button variant="secondary">
-                <CircleDot /> Reopen Ticket
-              </Button>
-            ) : ticket.resolution_status === 'RESOLVED' ? (
-              <>
-                <Button variant="secondary">
+          {ticket.ticket_status === 'CLOSED' ? (
+            <RoleCheck role="team" fallback={<></>}>
+              <form>
+                <Button
+                  formAction={async () => {
+                    'use server';
+                    await updateTicketStatus(params.id, true);
+                  }}
+                  variant="secondary"
+                >
+                  <CircleDot /> Reopen Ticket
+                </Button>
+              </form>
+            </RoleCheck>
+          ) : ticket.resolution_status === 'RESOLVED' ? (
+            <>
+              <form>
+                <Button
+                  formAction={async () => {
+                    'use server';
+                    await updateTicketStatus(params.id, undefined, false);
+                  }}
+                  variant="secondary"
+                >
                   <X /> Mark as Unresolved
                 </Button>
-                <Button variant="secondary">
+              </form>
+              <form>
+                <Button
+                  formAction={async () => {
+                    'use server';
+                    await updateTicketStatus(params.id, false);
+                  }}
+                  variant="secondary"
+                >
                   <X /> Close Ticket
                 </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="secondary">
+              </form>
+            </>
+          ) : (
+            <>
+              <form>
+                <Button
+                  formAction={async () => {
+                    'use server';
+                    await updateTicketStatus(params.id, undefined, true);
+                  }}
+                  variant="secondary"
+                >
                   <Check /> Mark as Resolved
                 </Button>
-                <Button variant="secondary">
+              </form>
+              <form>
+                <Button
+                  formAction={async () => {
+                    'use server';
+                    await updateTicketStatus(params.id, false);
+                  }}
+                  variant="secondary"
+                >
                   <X /> Close Ticket
                 </Button>
-              </>
-            )}
-          </RoleCheck>
+              </form>
+            </>
+          )}
         </div>
       </div>
       <div className="grid flex-grow grid-cols-3 gap-4 overflow-hidden pt-8">
