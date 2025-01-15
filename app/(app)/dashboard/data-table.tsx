@@ -11,7 +11,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+import {
+  Check,
+  ChevronRight,
+  CircleDot,
+  CircleX,
+  MoreHorizontal,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import * as React from 'react';
@@ -20,6 +27,7 @@ import { useRouter } from 'next/navigation';
 
 import { Ticket } from '@/types';
 
+import { LabelBadge } from '@/components/label-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,6 +47,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 function toTitleCase(str?: string) {
   if (!str) {
@@ -73,22 +86,26 @@ const columns: ColumnDef<Ticket>[] = [
   {
     accessorKey: 'title',
     header: 'Title',
-    cell: ({ row }) => <div>{row.getValue('title')}</div>,
+    cell: ({ row }) => <div className="w-full">{row.getValue('title')}</div>,
   },
   {
     accessorKey: 'subcategory.category.name',
     header: 'Category',
     cell: ({ row }) => {
-      const categoryName = row.original.subcategory?.category?.name;
-      return <Badge variant="default">{toTitleCase(categoryName)}</Badge>;
-    },
-  },
-  {
-    accessorKey: 'subcategory.name',
-    header: 'Subcategory',
-    cell: ({ row }) => {
-      const subcatName = row.original.subcategory?.name;
-      return <Badge variant="default">{toTitleCase(subcatName)}</Badge>;
+      return (
+        <div className="flex items-center space-x-0.5">
+          <Badge className="max-w-[10rem] overflow-hidden truncate whitespace-nowrap">
+            {toTitleCase(row.original.subcategory.category.name)}
+          </Badge>
+          <ChevronRight className="size-4" />
+          <Badge
+            variant="secondary"
+            className="max-w-[10rem] overflow-hidden truncate whitespace-nowrap"
+          >
+            {toTitleCase(row.original.subcategory.name)}
+          </Badge>
+        </div>
+      );
     },
   },
   {
@@ -101,21 +118,35 @@ const columns: ColumnDef<Ticket>[] = [
   },
   {
     accessorKey: 'resolution_status',
-    header: 'Resolution',
-    cell: ({ row }) => (
-      <Badge variant="outline">
-        {toTitleCase(row.getValue('resolution_status') as string)}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: 'ticket_status',
     header: 'Status',
     cell: ({ row }) => {
       return (
-        <Badge variant="outline">
-          {toTitleCase(row.getValue('ticket_status') as string)}
-        </Badge>
+        <div className="flex items-center space-x-1">
+          <Tooltip>
+            <TooltipTrigger>
+              {row.original.ticket_status === 'OPEN' ? (
+                <LabelBadge color="#008240" icon={CircleDot} className="p-2" />
+              ) : (
+                <LabelBadge color="#9c0909" icon={CircleX} className="p-2" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              {toTitleCase(row.original.ticket_status)}
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              {row.getValue('resolution_status') === 'RESOLVED' ? (
+                <LabelBadge color="#008240" icon={Check} className="p-2" />
+              ) : (
+                <LabelBadge color="#9c0909" icon={X} className="p-2" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              {toTitleCase(row.getValue('resolution_status'))}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       );
     },
   },
