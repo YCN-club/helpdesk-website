@@ -40,7 +40,7 @@ export async function handleApiResponse(response: Response) {
       );
     }
     throw new ApiError(
-      errorData.message || `API error: ${response.statusText}`,
+      errorData.error || `API error: ${response.statusText}`,
       response.status
     );
   }

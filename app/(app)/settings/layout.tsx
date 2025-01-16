@@ -22,8 +22,8 @@ const items: {
     href: '/settings/severity',
   },
   {
-    name: 'Support Users',
-    href: '/settings/support',
+    name: 'Support Staff',
+    href: '/settings/staff',
   },
 ];
 

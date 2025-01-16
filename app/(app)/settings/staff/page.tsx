@@ -1,4 +1,3 @@
-// Removed duplicate default export function
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +7,8 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { useEffect, useState } from 'react';
+
+import { createStaff, getStaff } from '@/lib/actions/staff';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +26,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
@@ -32,8 +40,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-
-// Removed duplicate default export function
 
 interface SupportStaff {
   id: string;
@@ -43,52 +49,38 @@ interface SupportStaff {
 }
 
 const supportStaffSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(255, 'Name must be less than 255 characters'),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  role: z
-    .string()
-    .min(1, 'Role is required')
-    .max(255, 'Role must be less than 255 characters'),
+  role: z.enum(['Team', 'System Admin']),
 });
 
 type SupportStaffFormValues = z.infer<typeof supportStaffSchema>;
 
-export default function SupportPage() {
+export default function SettingsSupportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [supportStaff, setSupportStaff] = useState<SupportStaff[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const form = useForm<SupportStaffFormValues>({
     resolver: zodResolver(supportStaffSchema),
     defaultValues: {
-      name: '',
       email: '',
-      role: '',
+      role: 'Team',
     },
   });
 
   useEffect(() => {
-    // Simulating API call
-    setTimeout(() => {
-      setSupportStaff([
-        {
-          id: '1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          role: 'Support Agent',
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          role: 'Support Manager',
-        },
-      ]);
+    (async () => {
+      setIsLoading(true);
+      try {
+        const data = await getStaff();
+        setSupportStaff(data?.staff || []);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch support staff');
+      }
       setIsLoading(false);
-    }, 1000);
+    })();
   }, []);
 
   const handleDelete = (id: string) => {
@@ -102,15 +94,29 @@ export default function SupportPage() {
   };
 
   async function onSubmit(data: SupportStaffFormValues) {
+    setIsCreating(true);
+    const createPromise = createStaff({
+      email: data.email,
+      isSysAdmin: data.role === 'System Admin',
+    });
+
+    toast.promise(createPromise, {
+      loading: 'Creating support staff...',
+      success: 'Support staff added successfully',
+      error: (error: any) => error.message || 'Failed to add support staff',
+    });
+
     try {
-      // Implement the API call to add support staff here
-      console.log('Support staff data:', data);
-      toast.success('Support staff added successfully');
+      await createPromise;
       form.reset();
       setDialogOpen(false);
+      // refresh staff list
+      const updatedData = await getStaff();
+      setSupportStaff(updatedData?.staff || []);
     } catch (error) {
-      toast.error('Failed to add support staff');
       console.error(error);
+    } finally {
+      setIsCreating(false);
     }
   }
 
@@ -200,19 +206,6 @@ export default function SupportPage() {
               >
                 <FormField
                   control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter staff name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -231,13 +224,28 @@ export default function SupportPage() {
                     <FormItem>
                       <FormLabel>Role</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter staff role" {...field} />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Team">Team</SelectItem>
+                            <SelectItem value="System Admin">
+                              System Admin
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Add Support Staff</Button>
+                <Button type="submit" disabled={isCreating}>
+                  Add Support Staff
+                </Button>
               </form>
             </Form>
           </DialogContent>

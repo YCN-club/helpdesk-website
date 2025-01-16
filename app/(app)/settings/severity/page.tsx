@@ -1,9 +1,13 @@
 'use client';
 
-import { Plus, Trash2 } from 'lucide-react';
+import { Info, Plus, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
+import { createSeverity, getSeverity } from '@/lib/actions/severity';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,36 +25,58 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+interface Severity {
+  id: string;
+  name: string;
+  level: number;
+  note?: string;
+}
+
 export default function SettingsSeverityPage() {
-  const [severities, setSeverities] = useState<
-    { id: number; name: string; color: string }[] | null
-  >(null);
+  const [severities, setSeverities] = useState<Severity[] | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newSeverity, setNewSeverity] = useState({
     name: '',
-    color: '#000000',
+    level: 1,
+    note: '',
   });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setSeverities([
-        { id: 1, name: 'Low', color: '#00FF00' },
-        { id: 2, name: 'Medium', color: '#FFA500' },
-        { id: 3, name: 'High', color: '#FF0000' },
-      ]);
-    }, 1000);
+    (async () => {
+      try {
+        const data = await getSeverity();
+        setSeverities(data.severity || []);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch severity');
+      }
+      setIsLoading(false);
+    })();
   }, []);
 
-  const handleAddSeverity = () => {
-    if (newSeverity.name) {
-      setSeverities(
-        (prev) => prev && [...prev, { ...newSeverity, id: Date.now() }]
-      );
-      setNewSeverity({ name: '', color: '#000000' });
+  async function handleAddSeverity() {
+    setIsCreating(true);
+    const createPromise = createSeverity(newSeverity);
+    toast.promise(createPromise, {
+      loading: 'Creating severity...',
+      success: 'Severity created successfully',
+      error: (error: any) => error.message || 'Failed to create severity',
+    });
+
+    try {
+      await createPromise;
+      setNewSeverity({ name: '', level: 1, note: '' });
       setIsDialogOpen(false);
+      const updated = await getSeverity();
+      setSeverities(updated.severity || []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCreating(false);
     }
-  };
+  }
 
   return (
     <div>
@@ -81,55 +107,99 @@ export default function SettingsSeverityPage() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="color" className="text-right">
-                  Color
+                <Label htmlFor="level" className="text-right">
+                  Level
                 </Label>
                 <Input
-                  id="color"
-                  type="color"
-                  value={newSeverity.color}
+                  id="level"
+                  type="number"
+                  value={newSeverity.level}
                   onChange={(e) =>
-                    setNewSeverity({ ...newSeverity, color: e.target.value })
+                    setNewSeverity({
+                      ...newSeverity,
+                      level: parseInt(e.target.value, 10),
+                    })
                   }
-                  className="col-span-3 h-10 w-10 cursor-pointer rounded-full p-1"
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="note" className="text-right">
+                  Note
+                </Label>
+                <Input
+                  id="note"
+                  value={newSeverity.note}
+                  onChange={(e) =>
+                    setNewSeverity({ ...newSeverity, note: e.target.value })
+                  }
+                  className="col-span-3"
                 />
               </div>
             </div>
-            <Button onClick={handleAddSeverity}>Add Severity</Button>
+            <Button onClick={handleAddSeverity} disabled={isCreating}>
+              Add Severity
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
 
-      {severities === null ? (
+      {isLoading ? (
         <div className="space-y-2">
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-8 w-full" />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex justify-between rounded border p-4"
+            >
+              <div>
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="mt-2 h-4 w-1/5" />
+                <Skeleton className="mt-2 h-4 w-1/2" />
+              </div>
+              <div className="flex space-x-2">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="space-y-2">
-          {severities.map((severity) => (
+          {severities?.map((severity) => (
             <div
               key={severity.id}
               className="flex justify-between rounded border p-4"
             >
-              <div className="flex items-center space-x-4">
-                <div
-                  className="size-6 rounded-full border border-muted"
-                  style={{ backgroundColor: severity.color }}
-                />
-                <span>{severity.name}</span>
+              <div>
+                <h2 className="flex items-center space-x-2 font-semibold">
+                  <span>{severity.name}</span>
+                  <Badge variant="secondary">Level {severity.level}</Badge>
+                </h2>
+                {severity.note && (
+                  <p className="mt-1 flex items-center space-x-1 text-sm text-muted-foreground">
+                    <Info className="h-4 w-4" />
+                    <span>{severity.note}</span>
+                  </p>
+                )}
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Deleting items is yet to be implemented
-                </TooltipContent>
-              </Tooltip>
+              <div className="flex space-x-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit severity</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete severity</TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           ))}
         </div>
