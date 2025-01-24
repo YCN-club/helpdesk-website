@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getJwt } from '@/lib/actions/auth';
 import { getTickets } from '@/lib/actions/tickets';
 
 import {
@@ -10,13 +11,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { DataTable } from './data-table';
+import { DataTable } from '@/app/(app)/dashboard/data-table';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
 };
 
 export default async function DashboardPage() {
+  const jwt = await getJwt();
   const tickets = await getTickets(false);
 
   return (
@@ -34,17 +36,20 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {tickets.filter((t) => t.ticket_status === 'CLOSED').length}
+                {
+                  tickets.filter((t) => t.resolution_status === 'UNRESOLVED')
+                    .length
+                }
               </CardTitle>
-              <CardDescription>Completed Tickets</CardDescription>
+              <CardDescription>Unresolved Tickets</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>
-                {tickets.filter((t) => t.assignee.name === 'Unassigned').length}
+                {tickets.filter((t) => t.assignee.id === jwt.uuid).length}
               </CardTitle>
-              <CardDescription>Unassigned Tickets</CardDescription>
+              <CardDescription>Assigned To You</CardDescription>
             </CardHeader>
           </Card>
         </div>
