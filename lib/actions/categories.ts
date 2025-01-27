@@ -9,18 +9,35 @@ import { runtimeEnv } from '@/config/env';
 import { getToken, handleApiResponse } from '@/lib/api';
 import { AuthenticationError } from '@/lib/api';
 
-export async function getCategories(): Promise<
-  Ticket['subcategory']['category'][]
+export async function getCategories({
+  showChildren = false,
+}: {
+  showChildren: boolean;
+}): Promise<
+  {
+    id: string;
+    name: string;
+    colour: string;
+    subcategories?: {
+      id: string;
+      category_id: string;
+      name: string;
+      colour: string;
+    }[];
+  }[]
 > {
   try {
     const token = await getToken();
-    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/category`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${runtimeEnv.BACKEND_URL}/options/category?show_children=${showChildren}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await handleApiResponse(response);
     return data.options;
   } catch (error) {

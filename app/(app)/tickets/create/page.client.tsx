@@ -76,7 +76,7 @@ export default function CreateTicketPageClient() {
     async function fetchCategories() {
       try {
         setIsLoading(true);
-        const data = await getCategories();
+        const data = await getCategories({ showChildren: false });
         setCategories(data);
       } catch (error) {
         console.error(error);

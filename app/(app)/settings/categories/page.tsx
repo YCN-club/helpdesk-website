@@ -28,7 +28,7 @@ export default function SettingsCategoriesPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const cats = await getCategories();
+        const cats = await getCategories({ showChildren: false });
         const expanded = await Promise.all(
           cats.map(async (cat) => {
             const subcats = await getSubcategories(cat.id);

@@ -42,7 +42,11 @@ import {
 export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categoryItems, setCategoryItems] = useState<
-    { id: string; name: string }[]
+    {
+      id: string;
+      name: string;
+      subcategories?: { id: string; name: string }[];
+    }[]
   >([]);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [categoryError, setCategoryError] = useState(false);
@@ -74,7 +78,7 @@ export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
     setCategoryOpen(true);
     setCategoryLoading(true);
     try {
-      const data = await getCategories();
+      const data = await getCategories({ showChildren: true });
       setCategoryItems(data);
     } catch {
       setCategoryError(true);
@@ -216,21 +220,28 @@ export function TicketStatus({ ticket }: { ticket: TicketDetails }) {
                           Could not fetch at this time.
                         </CommandEmpty>
                       ) : (
-                        <CommandGroup>
-                          {categoryItems
-                            .filter(
-                              (item) =>
-                                item.id !== ticket.subcategory.category.id
-                            )
-                            .map((item) => (
-                              <CommandItem
-                                key={item.id}
-                                onSelect={() => onSelectCategory(item.id)}
-                              >
-                                <LabelBadge name={item.name} color="#555" />
-                              </CommandItem>
-                            ))}
-                        </CommandGroup>
+                        <>
+                          {categoryItems.map((cat) => (
+                            <CommandGroup key={cat.id} heading={cat.name}>
+                              {cat.subcategories
+                                ?.filter(
+                                  (subcat) =>
+                                    subcat.id !== ticket.subcategory.id
+                                )
+                                .map((subcat) => (
+                                  <CommandItem
+                                    key={subcat.id}
+                                    onSelect={() => onSelectCategory(subcat.id)}
+                                  >
+                                    <LabelBadge
+                                      name={subcat.name}
+                                      color="#555"
+                                    />
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          ))}
+                        </>
                       )}
                     </CommandList>
                   </Command>
