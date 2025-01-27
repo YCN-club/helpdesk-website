@@ -27,8 +27,15 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL('/signup', request.url));
         }
 
-        // Otherwise, redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        // Otherwise, redirect to dashboard/tickets
+        if (
+          payload.roles?.includes('team') ||
+          payload.roles?.includes('sys_admin')
+        ) {
+          return NextResponse.redirect(new URL('/dashboard', request.url));
+        } else {
+          return NextResponse.redirect(new URL('/tickets', request.url));
+        }
       } catch (error) {
         console.error('Error decoding JWT:', error);
         // If JWT is invalid, clear the cookie and allow access to public route
@@ -59,6 +66,29 @@ export async function middleware(request: NextRequest) {
       if (
         !payload.roles?.includes('signup') &&
         request.nextUrl.pathname === '/signup'
+      ) {
+        if (
+          payload.roles?.includes('team') ||
+          payload.roles?.includes('sys_admin')
+        ) {
+          return NextResponse.redirect(new URL('/dashboard', request.url));
+        } else {
+          return NextResponse.redirect(new URL('/tickets', request.url));
+        }
+      }
+
+      // Restrict access to /dashboard unless the user has 'team' role
+      if (
+        request.nextUrl.pathname.startsWith('/dashboard') &&
+        !payload.roles?.includes('team')
+      ) {
+        return NextResponse.redirect(new URL('/tickets', request.url));
+      }
+
+      // Restrict access to /settings and its subpages unless the user has 'sys_admin' role
+      if (
+        request.nextUrl.pathname.startsWith('/settings') &&
+        !payload.roles?.includes('sys_admin')
       ) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
       }

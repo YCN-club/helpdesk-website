@@ -83,7 +83,11 @@ export default function SignupPage() {
           roles?: string[];
         };
         if (!decodedToken.roles?.includes('signup')) {
-          router.push('/dashboard');
+          if (decodedToken.roles?.includes('team')) {
+            router.push('/dashboard');
+          } else {
+            router.push('/tickets');
+          }
           return;
         }
         if (decodedToken.email) {
