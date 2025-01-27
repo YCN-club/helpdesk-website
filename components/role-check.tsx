@@ -1,8 +1,10 @@
-import React, { Suspense } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 
 import { getJwt } from '@/lib/actions/auth';
 
-export async function RoleCheck({
+export function RoleCheck({
   children,
   fallback,
   role,
@@ -11,11 +13,23 @@ export async function RoleCheck({
   fallback: React.JSX.Element;
   role: string;
 }) {
-  const jwtToken = await getJwt();
+  const [roles, setRoles] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  return (
-    <Suspense fallback={fallback}>
-      {jwtToken.roles.includes(role) ? children : null}
-    </Suspense>
-  );
+  useEffect(() => {
+    (async () => {
+      try {
+        const jwtToken = await getJwt();
+        setRoles(jwtToken.roles);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  if (isLoading) {
+    return fallback;
+  }
+
+  return roles.includes(role) ? children : null;
 }

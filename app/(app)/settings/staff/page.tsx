@@ -74,7 +74,7 @@ export default function SettingsSupportPage() {
       setIsLoading(true);
       try {
         const data = await getStaff();
-        setSupportStaff(data?.staff || []);
+        setSupportStaff(data || []);
       } catch (error) {
         console.error(error);
         toast.error('Failed to fetch support staff');
@@ -112,7 +112,7 @@ export default function SettingsSupportPage() {
       setDialogOpen(false);
       // refresh staff list
       const updatedData = await getStaff();
-      setSupportStaff(updatedData?.staff || []);
+      setSupportStaff(updatedData || []);
     } catch (error) {
       console.error(error);
     } finally {

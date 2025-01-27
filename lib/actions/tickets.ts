@@ -203,3 +203,38 @@ export async function addTicketMessage(ticketId: string, message: string) {
     throw error;
   }
 }
+
+export async function updateTicketInfo({
+  ticketId,
+  field,
+  value,
+}: {
+  ticketId: string;
+  field: 'category' | 'severity' | 'sla' | 'assignee';
+  value: string;
+}) {
+  const token = await getToken();
+  const formData = new FormData();
+  if (field === 'sla') {
+    formData.append('sla_id', value);
+  } else if (field === 'severity') {
+    formData.append('severity_id', value);
+  } else if (field === 'category') {
+    formData.append('subcategory_id', value);
+  } else if (field === 'assignee') {
+    formData.append('assignee_id', value);
+  }
+  const response = await fetch(
+    `${runtimeEnv.BACKEND_URL}/tickets/${ticketId}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }
+  );
+  const data = await handleApiResponse(response);
+  revalidatePath(`/tickets/${ticketId}`);
+  return data;
+}

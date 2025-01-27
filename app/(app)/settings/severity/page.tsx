@@ -47,7 +47,7 @@ export default function SettingsSeverityPage() {
     (async () => {
       try {
         const data = await getSeverity();
-        setSeverities(data.severity || []);
+        setSeverities(data || []);
       } catch (error) {
         console.error(error);
         toast.error('Failed to fetch severity');
@@ -70,7 +70,7 @@ export default function SettingsSeverityPage() {
       setNewSeverity({ name: '', level: 1, note: '' });
       setIsDialogOpen(false);
       const updated = await getSeverity();
-      setSeverities(updated.severity || []);
+      setSeverities(updated || []);
     } catch (error) {
       console.error(error);
     } finally {

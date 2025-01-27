@@ -8,16 +8,17 @@ import { runtimeEnv } from '@/config/env';
 
 import { AuthenticationError, getToken, handleApiResponse } from '@/lib/api';
 
-export async function getSeverity() {
+export async function getSeverity(): Promise<Ticket['severity'][]> {
   try {
     const token = await getToken();
-    const response = await fetch(`${runtimeEnv.BACKEND_URL}/admin/severity`, {
+    const response = await fetch(`${runtimeEnv.BACKEND_URL}/options/severity`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return await handleApiResponse(response);
+    const data = await handleApiResponse(response);
+    return data.levels;
   } catch (error) {
     if (error instanceof AuthenticationError && error.expired) {
       redirect('/?session_expired=true');

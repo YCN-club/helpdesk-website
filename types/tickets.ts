@@ -28,6 +28,7 @@ export interface Ticket {
     name: string;
     level: number;
     note: string;
+    colour: string;
   };
   sla: {
     id: string;

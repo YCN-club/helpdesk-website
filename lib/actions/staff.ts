@@ -16,7 +16,8 @@ export async function getStaff() {
         Authorization: `Bearer ${token}`,
       },
     });
-    return await handleApiResponse(response);
+    const data = await handleApiResponse(response);
+    return data.staff;
   } catch (error) {
     if (error instanceof AuthenticationError && error.expired) {
       redirect('/?session_expired=true');
