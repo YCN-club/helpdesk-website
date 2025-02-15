@@ -1,5 +1,8 @@
 # ycn.club helpdesk (website)
 
+![Release Badge](https://img.shields.io/github/v/release/YCN-club/helpdesk-website)
+![Forks Badge](https://img.shields.io/github/forks/YCN-club/helpdesk-website?style=flat)
+
 ![Cover Image](/meta/cover-image.png)
 
 A complete end-to-end HelpDesk system for institutes; allowing both students and faculty to act as users while utilizing dynamic categories/subcategories, SLAs, assignees, etc. Build with [Next.JS](https://nextjs.org) and [Tailwind CSS](https://tailwindcss.com) for the frontend.
